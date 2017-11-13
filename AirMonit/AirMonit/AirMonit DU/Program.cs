@@ -39,21 +39,7 @@ namespace AirMonit_DU
                 currentEntry.co = -1;
                 currentEntry.o3 = -1;
                 currentEntry.date = Convert.ToDateTime(array[3]);
-                switch (array[4])
-                {
-                    case "Leiria":
-                        currentEntry.city = Entry.City.LEIRIA;
-                        break;
-                    case "Coimbra":
-                        currentEntry.city = Entry.City.COIMBRA;
-                        break;
-                    case "Lisboa":
-                        currentEntry.city = Entry.City.LISBOA;
-                        break;
-                    case "Porto":
-                        currentEntry.city = Entry.City.PORTO;
-                        break;
-                }
+                currentEntry.city= (Entry.City) Enum.Parse(typeof(Entry.City), array[4].ToUpper());
             }
             switch (array[1])
             {
