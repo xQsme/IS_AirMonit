@@ -32,7 +32,7 @@ namespace AirMonit_DU
         public static void newEntry(String arg)
         {
             string[] array = arg.Split(';');
-            if (currentEntry == null)
+            if (currentEntry == null || currentEntry.city != (Entry.City)Enum.Parse(typeof(Entry.City), array[4].ToUpper()))
             {
                 currentEntry = new Entry();
                 currentEntry.no2 = -1;
