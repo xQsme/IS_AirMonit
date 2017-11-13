@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit DU", "AirMonit DU\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit Alarm", "AirMonit Alarm\AirMonit Alarm.csproj", "{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit DLog", "AirMonit DLog\AirMonit DLog.csproj", "{ACF1369F-6554-472C-A7D4-02DF7ADA0B46}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit DLog", "AirMonit DLog\AirMonit DLog.csproj", "{223F3E58-F788-4CE2-A16A-C87D4B3274DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ACF1369F-6554-472C-A7D4-02DF7ADA0B46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ACF1369F-6554-472C-A7D4-02DF7ADA0B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ACF1369F-6554-472C-A7D4-02DF7ADA0B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ACF1369F-6554-472C-A7D4-02DF7ADA0B46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{223F3E58-F788-4CE2-A16A-C87D4B3274DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{223F3E58-F788-4CE2-A16A-C87D4B3274DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{223F3E58-F788-4CE2-A16A-C87D4B3274DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{223F3E58-F788-4CE2-A16A-C87D4B3274DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
