@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Communication_Infrastructure" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Communication_Infrastructure" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="Entry">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="city" type="tns:City" />
+      <xs:element minOccurs="0" name="date" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="id" type="xs:int" />
+      <xs:element minOccurs="0" name="parameter" type="tns:Parameter" />
+      <xs:element minOccurs="0" name="value" type="xs:decimal" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Entry" nillable="true" type="tns:Entry" />
+  <xs:simpleType name="City">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LEIRIA" />
+      <xs:enumeration value="COIMBRA" />
+      <xs:enumeration value="LISBOA" />
+      <xs:enumeration value="PORTO" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="City" nillable="true" type="tns:City" />
+  <xs:simpleType name="Parameter">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NITROGEN_DIOXIDE" />
+      <xs:enumeration value="CARBON_MONOXIDE" />
+      <xs:enumeration value="OZONE" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="Parameter" nillable="true" type="tns:Parameter" />
+  <xs:complexType name="ArrayOfEntry">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Entry" nillable="true" type="tns:Entry" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEntry" nillable="true" type="tns:ArrayOfEntry" />
+</xs:schema>
