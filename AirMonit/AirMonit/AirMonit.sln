@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit Alarm", "AirMonit 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit DLog", "AirMonit DLog\AirMonit DLog.csproj", "{223F3E58-F788-4CE2-A16A-C87D4B3274DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit Service", "AirMonit Service\AirMonit Service.csproj", "{A360FCCB-EF20-4C7E-B639-19E4D5403611}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{223F3E58-F788-4CE2-A16A-C87D4B3274DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{223F3E58-F788-4CE2-A16A-C87D4B3274DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{223F3E58-F788-4CE2-A16A-C87D4B3274DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A360FCCB-EF20-4C7E-B639-19E4D5403611}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A360FCCB-EF20-4C7E-B639-19E4D5403611}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A360FCCB-EF20-4C7E-B639-19E4D5403611}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A360FCCB-EF20-4C7E-B639-19E4D5403611}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
