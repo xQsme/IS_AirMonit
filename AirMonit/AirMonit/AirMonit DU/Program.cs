@@ -52,7 +52,7 @@ namespace AirMonit_DU
                 mClient.Publish(topic, Encoding.UTF8.GetBytes(json));
                 Console.WriteLine("Uploaded by DU: " + json);
                 currentEntry = null;
-                Thread.Sleep(5000);
+                Thread.Sleep(15000);
             }
         }
     }

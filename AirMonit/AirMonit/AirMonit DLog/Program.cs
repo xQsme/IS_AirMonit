@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using AirMonit_DLog.Models;
+using AirMonit_DLog.Properties;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
 
@@ -13,7 +14,7 @@ namespace AirMonit_DLog
 {
     class Program
     {
-        private static string CONNSTR = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"D:\\Documentos\\Git\\IS_AirMonit\\AirMonit\\AirMonit\\AirMonit DLog\\App_Data\\DBAirMonit.mdf\";Integrated Security=True";
+        private static string CONNSTR = Settings.Default.connStr;
         private static MqttClient mClient;
         private static string[] sTopics = new[] { "dataUploader", "alarm" };
         private static string ip = "127.0.0.1";

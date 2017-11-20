@@ -1,0 +1,3 @@
+Hostname    43a269cc-ada0-4e03-bdb2-a83100ad06e2.sqlserver.sequelizer.com   
+Username    zwkazykoudbumpbt    
+Password    YAS8WYxf5pSS8nDgkLvRNSnJdrSJqockhZt5YwHeBtdNpNJJL6MZqsfgni4EgVWP

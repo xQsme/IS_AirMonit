@@ -12,7 +12,7 @@ namespace AirMonit_Service.Controllers
 {
     public class EntriesController : ApiController
     {
-        private static string CONNSTR = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"D:\\Documentos\\Git\\IS_AirMonit\\AirMonit\\AirMonit\\AirMonit DLog\\App_Data\\DBAirMonit.mdf\";Integrated Security=True";
+        private static string CONNSTR = System.Configuration.ConfigurationManager.ConnectionStrings["AirMonit_Service.Properties.Settings.connStr"].ConnectionString;
         // GET api/<controller>
         public IEnumerable<Entry> GetEntries()
         {
