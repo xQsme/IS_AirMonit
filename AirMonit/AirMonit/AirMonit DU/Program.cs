@@ -2,8 +2,9 @@
 using System.Text;
 using System.Threading;
 using System.Web.Script.Serialization;
-using AirMonit_DU.Models;
 using uPLibrary.Networking.M2Mqtt;
+using IAirEntries;
+using System.Collections.Generic;
 
 namespace AirMonit_DU
 {
@@ -13,47 +14,43 @@ namespace AirMonit_DU
         private static MqttClient mClient;
         private static String topic = "dataUploader";
         private static String ip = "127.0.0.1";
+        private static JavaScriptSerializer jss;
+        private static string json;
+        private static string[] array;
 
         static void Main(string[] args)
         {
             mClient = new MqttClient(ip);
             mClient.Connect(Guid.NewGuid().ToString());
             AirSensorNodeDll.AirSensorNodeDll dll = new AirSensorNodeDll.AirSensorNodeDll();
-            dll.Initialize(newEntry, 100); 
+            currentEntry = new Entry();
+            jss = new JavaScriptSerializer();
+
+
+            //Inicializar variaveis a usar no newEntry antes de chamar o dll!
+            dll.Initialize(newEntry, 1000); 
         }
         public static void newEntry(String arg)
         {
-            string[] array = arg.Split(';');
-            if (currentEntry == null || currentEntry.city != (Entry.City)Enum.Parse(typeof(Entry.City), array[4].ToUpper()))
+            //NO2; 123; 12-4-2017; Leiria
+            array = arg.Split(';');
+
+            try
             {
-                currentEntry = new Entry();
-                currentEntry.no2 = -1;
-                currentEntry.co = -1;
-                currentEntry.o3 = -1;
+                currentEntry.name = array[1];
+                currentEntry.val = int.Parse(array[2]);
                 currentEntry.date = Convert.ToDateTime(array[3]);
-                currentEntry.city= (Entry.City) Enum.Parse(typeof(Entry.City), array[4].ToUpper());
+                currentEntry.city =  array[4];
+
             }
-            switch (array[1])
+            catch (Exception ex)
             {
-                case "NO2":
-                currentEntry.no2 = int.Parse(array[2]);
-                break;
-                case "CO":
-                currentEntry.co = int.Parse(array[2]);
-                break;
-                case "O3":
-                currentEntry.o3 = int.Parse(array[2]);
-                break;
+                Console.WriteLine("Unable to parse Entry: " + ex.Message);
             }
-            if (currentEntry.co != -1 && currentEntry.no2 != -1 && currentEntry.o3 != -1)
-            {
-                JavaScriptSerializer jss = new JavaScriptSerializer();
-                string json = jss.Serialize(currentEntry);
-                mClient.Publish(topic, Encoding.UTF8.GetBytes(json));
-                Console.WriteLine("Uploaded by DU: " + json);
-                currentEntry = null;
-                Thread.Sleep(15000);
-            }
+            
+            json = jss.Serialize(currentEntry);
+            mClient.Publish(topic, Encoding.UTF8.GetBytes(json));
+            Console.WriteLine("Uploaded by DU: " + json);
         }
     }
 }
