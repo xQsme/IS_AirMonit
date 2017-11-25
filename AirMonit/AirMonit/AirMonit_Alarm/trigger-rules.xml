@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<rules>
+<rules applyRule="true">
   <NO2 applyRule="true">
     <rule applyRule="false">
       <greater>
@@ -36,9 +36,9 @@
     </rule>
     <rule applyRule="true">
       <between>
-        <num1></num1>
-        <num2></num2>
-        <msg></msg>
+        <num1>12</num1>
+        <num2>30</num2>
+        <msg>Teste...</msg>
       </between>
     </rule>
   </CO>

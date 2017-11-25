@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:element name="rules" type="ruleType">
+  </xs:element>
+
+
+  <xs:complexType name="ruleType">
+    <xs:sequence>
+  <!-- <NO2>, <CO>, <O3> -->
+      <xs:element maxOccurs="1" name="CO2" type="particleRuleType" />
+      <xs:element maxOccurs="1" name="O3" type="particleRuleType" />
+      <xs:element maxOccurs="1" name="NO" type="particleRuleType" />
+      <!--@NextElement-->
+
+    </xs:sequence>
+  </xs:complexType>
+
+<!-- Conteudo dos complexTypes -->
+  <xs:complexType name="particleRuleType">
+    <xs:sequence>
+      <!-- <Rule> -->
+      <xs:element name="rule" type="ruleCondition" maxOccurs="unbounded"/>
+    </xs:sequence>
+    
+    <xs:attribute name="applyRule" fixed="true" />
+  </xs:complexType>
+
+  <!-- Conteudo dos complexTypes -->
+  <xs:complexType name="ruleCondition">
+      <!-- <Rule> -->
+      <xs:choice>
+        <xs:element name="equals" type="conditionParams"/>
+        <xs:element name="less" type="conditionParams"/>
+        <xs:element name="greater" type="conditionParams"/>
+        <xs:element name="between" type="conditionParams"/>
+      </xs:choice>
+      
+  </xs:complexType>
+
+  <xs:complexType name="conditionParams">
+    <xs:sequence>
+        <xs:element name="num" minOccurs="1" maxOccurs="2" type="xs:decimal" />
+        <xs:element name="msg" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  
+</xs:schema>

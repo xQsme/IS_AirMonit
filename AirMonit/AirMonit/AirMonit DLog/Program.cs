@@ -15,12 +15,14 @@ namespace AirMonit_DLog
     {
 
         #region QUERIES
-        //Para não ter que efetuar sempre esta query sempre que adiciona um novo dado
-        //Caso a BD mude os id's adicione algum distrito ou remova não deteta a alteracao! so se voltar a correr esta query
+
         private const string SELECT_ALLDISTRICTS_ID_NAME = "SELECT id, name FROM CITIES";
+        private const string SELECT_ALL_PARTICLES = "SELECT name FROM ENTRIES GROUP BY name;";
         private const string INSERT_NEWDISTRICT = "INSERT INTO CITIES VALUES (@name, @latitude, @longitude)";
-        private const string INSERT_ENTRY = "INSERT INTO ENTRIESS (name, value, date, cityId) VALUES (@particleName, @value, @date, @cityForeignKey)";
+        private const string INSERT_ENTRY = "INSERT INTO ENTRIES (name, value, date, cityId) VALUES (@particleName, @value, @date, @cityForeignKey)";
         private const string INSERT_ALARM = "";
+        private const string UPDATE_GLOBAL_AVERAGE = "UPDATE CITYAVERAGE SET SUM = (SUM + @value), count = (count+1), average = ROUND(((SUM + @value) / (count+1)),2) WHERE particle = @particleName AND cityId = @cityId;";
+        
         #endregion
 
         private static string CONNSTR = Settings.Default.connStr;
@@ -29,10 +31,12 @@ namespace AirMonit_DLog
         private static string ip = "127.0.0.1";
         
         private static List<City> citiesListInDB = new List<City>();
+        private static List<string> particlesList = new List<string>();
 
         static void Main(string[] args)
         {
             LoadCities();
+            LoadParticles();
 
             mClient = new MqttClient(ip);
             mClient.Connect(Guid.NewGuid().ToString());
@@ -100,6 +104,8 @@ namespace AirMonit_DLog
                 {
                     //NEW CITY FOUND! This class is not responsible for inserting new Cities due to not knowing more then the city name (missing long, lang)
                     LoadCities();
+                    Console.WriteLine("New city found if you wish to start recording the data please insert in table 'Cities'");
+                    UpdateCityAverage();
                     c = citiesListInDB.Find(ele => ele.Name.ToLower().Equals(city));
                 }
                 int cityFK = c.ID;
@@ -124,6 +130,13 @@ namespace AirMonit_DLog
                 conn.Close();
                 if (nRows > 0)
                 {
+                    UpdateParticleAverage(particle, value, cityFK);
+                    //Ja inseriu valores ja pode popular a lista e ja pode adicionar os sensores na average de cada cidade
+                    if (particlesList.Count == 0)
+                    {
+                        LoadParticles();
+                        UpdateCityAverage();
+                    }
                     return true;
                 }
             }
@@ -137,6 +150,60 @@ namespace AirMonit_DLog
                 return false;
             }
             return false;
+        }
+
+        //private static void UpdateCityAverage()
+        //{
+        //    foreach (City c in citiesListInDB)
+        //    {
+        //        "MERGE CITYAVERAGE as target" +
+        //        "USING (SELECT name, cityId FROM CITYAVERAGE) as source" +
+        //        "ON source.name = target.name AND source.cityId = target.cityID" +
+        //        "WHEN NOT MATCHED THEN" +
+        //        "INSERT (source.name, source.cityId)" +
+        //        "VALUES"
+        //    }
+        //}
+
+        //Atualiza os valores da média das particulas e das cidades
+        private static void UpdateParticleAverage(string particle, decimal value, int cityId)
+        {
+
+            SqlConnection conn = new SqlConnection(CONNSTR);
+
+            try
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = UPDATE_GLOBAL_AVERAGE;
+                
+                cmd.Parameters.AddWithValue("@particleName", particle.ToUpper());
+                cmd.Parameters.AddWithValue("@value", value);
+                cmd.Parameters.AddWithValue("@cityId", cityId);
+                cmd.Connection = conn;
+
+                int nRows = cmd.ExecuteNonQuery();
+
+                conn.Close();
+                if (nRows <= 0)
+                {
+                    Console.WriteLine("Unable to update table ParticlesAverage: ");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                conn.Close();
+                Console.WriteLine("FATAL ERROR: Updating Average table: " + ex.Message);
+            }
+            finally
+            {
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    conn.Close();
+                }
+            }
         }
 
         /// <summary>
@@ -191,5 +258,43 @@ namespace AirMonit_DLog
             }
 
         }
+
+        private static void LoadParticles()
+        {
+            SqlConnection conn = new SqlConnection(CONNSTR);
+            citiesListInDB.Clear();
+            try
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = SELECT_ALL_PARTICLES;
+
+                cmd.Connection = conn;
+                SqlDataReader reader = cmd.ExecuteReader();
+
+
+                while (reader.Read())
+                {
+                    particlesList.Add((string)reader["name"]);
+                }
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                conn.Close();
+                Console.WriteLine("FATAL ERROR: Loading Particles When: " + ex.Message);
+                Console.ReadLine();
+                Environment.Exit(1);
+            }
+            finally
+            {
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    conn.Close();
+                }
+            }
+        }
+
     }
 }
