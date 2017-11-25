@@ -105,7 +105,7 @@ namespace AirMonit_DLog
                     //NEW CITY FOUND! This class is not responsible for inserting new Cities due to not knowing more then the city name (missing long, lang)
                     LoadCities();
                     Console.WriteLine("New city found if you wish to start recording the data please insert in table 'Cities'");
-                    UpdateCityAverage();
+                    //UpdateCityAverage();
                     c = citiesListInDB.Find(ele => ele.Name.ToLower().Equals(city));
                 }
                 int cityFK = c.ID;
