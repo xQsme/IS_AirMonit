@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<rules applyRule="true">
+  <NO2 applyRule="true">
+    <rule applyRule="false">
+      <greater>
+        <num>100</num>
+        <msg>Unhealthy for Sensitive Groups</msg>
+      </greater>
+    </rule>
+    <rule applyRule="true">
+      <equals>
+        <num>151</num>
+        <msg>Unhealthy for all beings</msg>
+      </equals>
+    </rule>
+    <rule applyRule="true">
+      <between>
+        <num1>200</num1>
+        <num2>300</num2>
+        <msg>Avoid outside contact</msg>
+      </between>
+    </rule>
+  </NO2>
+  <CO applyRule="false">
+    <rule applyRule="true">
+      <greater>
+        <num></num>
+        <msg></msg>
+      </greater>
+    </rule>
+    <rule applyRule="true">
+      <equals>
+        <num></num>
+        <msg></msg>
+      </equals>
+    </rule>
+    <rule applyRule="true">
+      <between>
+        <num1>12</num1>
+        <num2>30</num2>
+        <msg>Teste...</msg>
+      </between>
+    </rule>
+  </CO>
+  <O3 applyRule="true">
+    <rule applyRule="true">
+      <less>
+        <num>30</num>
+        <msg>Level is too low minimize exposure to the sun..</msg>
+      </less>
+    </rule>
+    <rule applyRule="true">
+      <equals>
+        <num>0</num>
+        <msg>Do not go outsite!</msg>
+      </equals>
+    </rule>
+    <rule applyRule="false">
+      <between>
+        <num1>10</num1>
+        <num2>20</num2>
+        <msg>Sun exposure can be very dangerous!</msg>
+      </between>
+    </rule>
+  </O3>
+
+</rules>

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit_Alarm", "AirMonit_Alarm\AirMonit_Alarm.csproj", "{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IAirEntries", "IAirEntries\IAirEntries.csproj", "{DFF49C52-8246-4695-B739-A0B5C8EC1903}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFF49C52-8246-4695-B739-A0B5C8EC1903}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFF49C52-8246-4695-B739-A0B5C8EC1903}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFF49C52-8246-4695-B739-A0B5C8EC1903}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFF49C52-8246-4695-B739-A0B5C8EC1903}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1B276C79-9AF2-42D6-A843-14CAF3B96C59}
+	EndGlobalSection
+EndGlobal

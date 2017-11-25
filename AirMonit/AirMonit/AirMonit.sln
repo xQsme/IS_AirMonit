@@ -5,13 +5,13 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit DU", "AirMonit DU\AirMonit DU.csproj", "{9B08B403-8813-40AE-A09D-EBC88653C8EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit Alarm", "AirMonit Alarm\AirMonit Alarm.csproj", "{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit DLog", "AirMonit DLog\AirMonit DLog.csproj", "{223F3E58-F788-4CE2-A16A-C87D4B3274DB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit Service", "AirMonit Service\AirMonit Service.csproj", "{A360FCCB-EF20-4C7E-B639-19E4D5403611}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IAirEntries", "IAirEntries\IAirEntries.csproj", "{508FECF4-5636-49AB-A86A-08722CD080C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit_Alarm", "AirMonit_Alarm\AirMonit_Alarm.csproj", "{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,6 @@ Global
 		{9B08B403-8813-40AE-A09D-EBC88653C8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B08B403-8813-40AE-A09D-EBC88653C8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B08B403-8813-40AE-A09D-EBC88653C8EE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{223F3E58-F788-4CE2-A16A-C87D4B3274DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{223F3E58-F788-4CE2-A16A-C87D4B3274DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{223F3E58-F788-4CE2-A16A-C87D4B3274DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{508FECF4-5636-49AB-A86A-08722CD080C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{508FECF4-5636-49AB-A86A-08722CD080C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{508FECF4-5636-49AB-A86A-08722CD080C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
