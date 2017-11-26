@@ -13,30 +13,23 @@ namespace AirMonit_DLog
 {
     class Program
     {
-
-        #region QUERIES
-
-        private const string SELECT_ALLDISTRICTS_ID_NAME = "SELECT id, name FROM CITIES";
-        private const string SELECT_ALL_PARTICLES = "SELECT name FROM ENTRIES GROUP BY name;";
-        private const string INSERT_NEWDISTRICT = "INSERT INTO CITIES VALUES (@name, @latitude, @longitude)";
-        private const string INSERT_ENTRY = "INSERT INTO ENTRIES (name, value, date, cityId) VALUES (@particleName, @value, @date, @cityForeignKey)";
-        private const string INSERT_ALARM = "";
-        private const string UPDATE_GLOBAL_AVERAGE = "UPDATE CITYAVERAGE SET SUM = (SUM + @value), count = (count+1), average = ROUND(((SUM + @value) / (count+1)),2) WHERE particle = @particleName AND cityId = @cityId;";
         
-        #endregion
-
-        private static string CONNSTR = Settings.Default.connStr;
         private static MqttClient mClient;
         private static string[] sTopics = new[] { "dataUploader", "alarm" };
         private static string ip = "127.0.0.1";
         
         private static List<City> citiesListInDB = new List<City>();
         private static List<string> particlesList = new List<string>();
+        private static JavaScriptSerializer jssParticleEntry = new JavaScriptSerializer();
+        private static JavaScriptSerializer jssAlarmEntry = new JavaScriptSerializer();
 
         static void Main(string[] args)
         {
-            LoadCities();
-            LoadParticles();
+            citiesListInDB = DBManager.GetCities();
+            particlesList = DBManager.GetParticles();
+            
+            //Preparar a tabela para poder receber os dados
+            UpdateCityAverage();
 
             mClient = new MqttClient(ip);
             mClient.Connect(Guid.NewGuid().ToString());
@@ -48,252 +41,142 @@ namespace AirMonit_DLog
         private static void MClient_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
         {
             //NOTA!: agora vem so 1 particula de cada vez!!!
+            String json = Encoding.UTF8.GetString(e.Message);
             if (e.Topic == sTopics[0])
             {
-                Entry newEntry;
-                try
-                {
-                    
-                    String json = Encoding.UTF8.GetString(e.Message);
-                    Console.WriteLine(json);
-                    JavaScriptSerializer jss = new JavaScriptSerializer();
-                    newEntry = jss.Deserialize<Entry>(json);
-
-
-
-                    if (WriteToDBNewParticleRecord(newEntry))
-                    {
-                        Console.WriteLine("Entry added to DB: " + Environment.NewLine);
-                    }
-
-                    if (newEntry.message != "")
-                    {
-                        //Write to other table that has all records of alerts!
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Parsing JSON went wrong: " + ex.Message);
-                }
-
+                SaveParticleEntry(json);
             }
             else if (e.Topic == sTopics[1])
             {
-                Console.WriteLine("Received from Alarm: " + Encoding.UTF8.GetString(e.Message));
+                SaveAlarmEntry(json);
             }
         }
 
-        //So adiciona o novo record na tabela Entries as mensagens estao na tabela Alerts
-        private static Boolean WriteToDBNewParticleRecord(Entry entry)
+        private static void SaveAlarmEntry(string json)
         {
-            SqlConnection conn = new SqlConnection(CONNSTR);
-
+            AlarmEntry alarmEntry;
+            //Convert the object...
             try
-            {                
-                //binding dos valores
-                string particle = entry.name;
-                decimal value = entry.val;
-                DateTime date = entry.date;
-                string city = entry.city.ToLower();
+            {
+                alarmEntry = jssAlarmEntry.Deserialize<AlarmEntry>(json);
 
-                //Sem ter que ir sempre á BD procurar a FK pelo name buscar da lista
-                City c = citiesListInDB.Find(ele => ele.Name.ToLower().Equals(city));
+                int cityFK = GetCityForeignKey(alarmEntry.City);
 
-                if (c == null)
+                CheckCityAverageStructure();
+
+                //TODO: Criar a tabela pensar no relacionamente se é que vai haver e criar metodo para inserir na BD
+                if (DBManager.WriteToTableAlarm(alarmEntry, cityFK) > 0)
                 {
-                    //NEW CITY FOUND! This class is not responsible for inserting new Cities due to not knowing more then the city name (missing long, lang)
-                    LoadCities();
-                    Console.WriteLine("New city found if you wish to start recording the data please insert in table 'Cities'");
-                    //UpdateCityAverage();
-                    c = citiesListInDB.Find(ele => ele.Name.ToLower().Equals(city));
+
                 }
-                int cityFK = c.ID;
-                
-                //Comando sql
-                conn.Open();
+                //Inserted in DB
+                Console.WriteLine("Received from Alarm: " + json);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[PARSING]: " + ex.Message);
+            }
+            
+        }
 
-                SqlCommand cmd = new SqlCommand();
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = INSERT_ENTRY;
+        private static void SaveParticleEntry(string json)
+        {
+            ParticleEntry particleEntry;
+            try
+            {
 
-                //CONVERT(SMALLDATETIME, @, 108)
+                Console.WriteLine(json);
 
-                cmd.Parameters.AddWithValue("@particleName", particle);
-                cmd.Parameters.AddWithValue("@value", value);
-                cmd.Parameters.AddWithValue("@date", date);//.ToString("yyyy-MM-dd HH:mm:ss"));
-                cmd.Parameters.AddWithValue("@cityForeignKey", cityFK);
+                particleEntry = jssParticleEntry.Deserialize<ParticleEntry>(json);
 
-                cmd.Connection = conn;
-                int nRows = cmd.ExecuteNonQuery();
-
-                conn.Close();
-                if (nRows > 0)
+                try
                 {
-                    UpdateParticleAverage(particle, value, cityFK);
-                    //Ja inseriu valores ja pode popular a lista e ja pode adicionar os sensores na average de cada cidade
-                    if (particlesList.Count == 0)
+                    int cityFK = GetCityForeignKey(particleEntry.city);
+                    if (DBManager.WriteToTableEntries(particleEntry, cityFK) > 0)
                     {
-                        LoadParticles();
-                        UpdateCityAverage();
+                        Console.WriteLine("Entry added to DB: " + Environment.NewLine);
+                        //Acabou de inserir uma linha entao vamos popular a lista de particulas
+                        if (particlesList.Count == 0)
+                        {
+                            particlesList = DBManager.GetParticles();
+                            UpdateCityAverage();
+                        }
+                        //Garante que so é chamado quando tiver linhas para todas as particulas na CityAverage
+                        DBManager.UpdateParticleAverage(particleEntry.name, particleEntry.val, cityFK);
                     }
-                    return true;
                 }
-            }
-            catch (Exception ex)
-            {
-                if (conn.State == System.Data.ConnectionState.Open)
+                catch (Exception ex)
                 {
-                    conn.Close();
-                }
-                Console.WriteLine("SQL: "+ ex.Message);
-                return false;
-            }
-            return false;
-        }
-
-        //private static void UpdateCityAverage()
-        //{
-        //    foreach (City c in citiesListInDB)
-        //    {
-        //        "MERGE CITYAVERAGE as target" +
-        //        "USING (SELECT name, cityId FROM CITYAVERAGE) as source" +
-        //        "ON source.name = target.name AND source.cityId = target.cityID" +
-        //        "WHEN NOT MATCHED THEN" +
-        //        "INSERT (source.name, source.cityId)" +
-        //        "VALUES"
-        //    }
-        //}
-
-        //Atualiza os valores da média das particulas e das cidades
-        private static void UpdateParticleAverage(string particle, decimal value, int cityId)
-        {
-
-            SqlConnection conn = new SqlConnection(CONNSTR);
-
-            try
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand();
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = UPDATE_GLOBAL_AVERAGE;
-                
-                cmd.Parameters.AddWithValue("@particleName", particle.ToUpper());
-                cmd.Parameters.AddWithValue("@value", value);
-                cmd.Parameters.AddWithValue("@cityId", cityId);
-                cmd.Connection = conn;
-
-                int nRows = cmd.ExecuteNonQuery();
-
-                conn.Close();
-                if (nRows <= 0)
-                {
-                    Console.WriteLine("Unable to update table ParticlesAverage: ");
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                conn.Close();
-                Console.WriteLine("FATAL ERROR: Updating Average table: " + ex.Message);
-            }
-            finally
-            {
-                if (conn.State == System.Data.ConnectionState.Open)
-                {
-                    conn.Close();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Carrega as cidades que estao na BD para poder saber as PK delas e usar no inser das entries para relacionar a cidade com o record
-        /// </summary>
-        private static void LoadCities()
-        {
-
-            SqlConnection conn = new SqlConnection(CONNSTR);
-            citiesListInDB.Clear();
-            try
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand();
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = SELECT_ALLDISTRICTS_ID_NAME;
-
-                cmd.Connection = conn;
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                City city;
-                while (reader.Read())
-                {
-                    city = new City
-                    {
-                        ID = (int)reader["Id"],
-                        Name = ((string)reader["name"]).Trim()
-                    };
-                    citiesListInDB.Add(city);
-                }
-                reader.Close();
-                if(citiesListInDB.Count <= 0)
-                {
-                    Console.WriteLine("FATAL ERROR: TABLE CITIES IS EMPTY"+ Environment.NewLine+ "Unable to continue press any key to continue...");
-                    Console.ReadLine();
+                    Console.WriteLine("[LOAD DATA]" + ex.Message);
+                    Console.WriteLine("Press any key to exit...");
+                    Console.ReadKey();
                     Environment.Exit(1);
                 }
             }
             catch (Exception ex)
             {
-                conn.Close();
-                Console.WriteLine("FATAL ERROR: Loading Cities When: " + ex.Message);
-                Console.ReadLine();
-                Environment.Exit(1);
+                Console.WriteLine("Parsing JSON went wrong: " + ex.Message);
             }
-            finally
-            {
-                if (conn.State == System.Data.ConnectionState.Open)
-                {
-                    conn.Close();
-                }
-            }
-
         }
 
-        private static void LoadParticles()
+        private static int GetCityForeignKey(string city)
         {
-            SqlConnection conn = new SqlConnection(CONNSTR);
-            citiesListInDB.Clear();
-            try
+            //Sem ter que ir sempre á BD procurar a FK pelo name buscar da lista
+            city = city.ToLower();
+            City c = citiesListInDB.Find(ele => ele.Name.ToLower().Equals(city));
+
+            if (c == null)
             {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand();
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = SELECT_ALL_PARTICLES;
-
-                cmd.Connection = conn;
-                SqlDataReader reader = cmd.ExecuteReader();
-
-
-                while (reader.Read())
+                //NEW CITY FOUND! This class is not responsible for inserting new Cities due to not knowing more then the city name (missing long, lang)
+                List<City> cities = DBManager.GetCities();
+                Console.WriteLine("New city found if you wish to start recording the data please insert in table 'Cities'");
+                //UpdateCityAverage();
+                c = citiesListInDB.Find(ele => ele.Name.ToLower().Equals(city));
+                if(c == null)
                 {
-                    particlesList.Add((string)reader["name"]);
-                }
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                conn.Close();
-                Console.WriteLine("FATAL ERROR: Loading Particles When: " + ex.Message);
-                Console.ReadLine();
-                Environment.Exit(1);
-            }
-            finally
-            {
-                if (conn.State == System.Data.ConnectionState.Open)
-                {
-                    conn.Close();
+                    throw new Exception("Tried twice getting Cities from table Cities but not a single city was found");
                 }
             }
+
+            //TODO: Avisar o User que a Tabela Cities esta vazia e que precisa de ser preenchida
+            //Vai crashar se a BD nao tiver nenhuma cidade...
+            return c.ID;
+        }
+
+
+        /// <summary>
+        /// Vai buscar todas as cidades que nao tenham rows na CityAverage e vai pedir ao DBManager
+        /// Para inserir todas as particulas que existam para essa cidade na tabela CityAverage
+        /// </summary>
+        private static void UpdateCityAverage()
+        {
+            foreach (City c in citiesListInDB)
+            {
+                //Verificar se a cidade está na tabela senao insere todas as particulas 
+                //Verificar se as cidades teem todas uma linha para cada particula
+
+                //grab the cities
+                List<int> citiesInAverageId = DBManager.GetCitiesNotInAverage();
+                foreach (int cityId in citiesInAverageId)
+                {
+                    foreach (string particle in particlesList)
+                    {
+                        //para cada particula na lista particlesList insere uma nova linha limpa
+                        DBManager.insertCityInAverage(cityId, particle);
+                    }
+                }
+            }
+        }
+
+        private static void CheckCityAverageStructure()
+        {
+            //Verificar se existe a cidade na tabela average
+            List<int> citiesMissingInAverage = DBManager.GetCitiesNotInAverage();
+            foreach (int missingCity in citiesMissingInAverage)
+            {
+                DBManager.insertCityInAverage(missingCity);
+            }
+
         }
 
     }

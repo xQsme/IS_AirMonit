@@ -16,7 +16,7 @@ namespace AirMonit_Alarm
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new airMonit_alarm());
+            Application.Run(new AirMonit_Alarm());
         }
     }
 }

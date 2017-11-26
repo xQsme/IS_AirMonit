@@ -355,11 +355,12 @@ namespace AirMonit_Alarm
             {
                 try
                 {
-                    list.Add(new RuleCondition(node));
+                    RuleCondition ruleCond = new RuleCondition(node);
+                    list.Add(ruleCond);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("MINHA EXCECAO" + ex.Message);
+                    Console.WriteLine("[PARSING]" + ex.Message);
                 }
             }
 
@@ -473,6 +474,15 @@ namespace AirMonit_Alarm
                 updateNode(rule);
             }
             
+            Save();
+        }
+
+        public void addNewParticleToXML(string particle)
+        {
+            //<NO2 applyRule="true">< rule applyRule = "false" >
+            XmlElement particleNode = doc.CreateElement(particle);
+            particleNode.SetAttribute("applyRule", true.ToString());
+            GetRoot().AppendChild(particleNode);
             Save();
         }
 

@@ -1,6 +1,6 @@
 ﻿namespace AirMonit_Alarm
 {
-    partial class airMonit_alarm
+    partial class AirMonit_Alarm
     {
         /// <summary>
         /// Variável de designer necessária.
@@ -332,7 +332,7 @@
             this.FileStatusIcon.TabStop = false;
             this.FileStatusIcon.Tag = "";
             // 
-            // airMonit_alarm
+            // AirMonit_Alarm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -348,8 +348,9 @@
             this.Controls.Add(this.panelCRUD_Rules);
             this.Controls.Add(this.listAirParticles);
             this.Controls.Add(this.panelRulesInfo);
-            this.Name = "airMonit_alarm";
+            this.Name = "AirMonit_Alarm";
             this.Text = "AirMonit Alarm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AirMonit_Alarm_FormClosing);
             this.panelRulesInfo.ResumeLayout(false);
             this.panelCRUD_Rules.ResumeLayout(false);
             this.panelCRUD_Rules.PerformLayout();

@@ -8,7 +8,7 @@ using System.Xml;
 namespace AirMonit_Alarm
 {
     
-    public partial class airMonit_alarm : Form
+    public partial class AirMonit_Alarm : Form
     {
         public class FakeRecord
         {
@@ -41,14 +41,61 @@ namespace AirMonit_Alarm
         string ICONFILENOTOK = AppDomain.CurrentDomain.BaseDirectory + @"file_notok.png";
 
         XMLHandler xmlHandler;
+        MessagingHandler mqttHandler;
+        private static string[] sTopics = new[] { "dataUploader", "alarm" };
+        private static string ip = Properties.Settings.Default.BrokerIP;
+        private Dictionary<string, List<RuleCondition>> particlesRulesDictionary;
+
         string FILEPATHXML = AppDomain.CurrentDomain.BaseDirectory + @"trigger-rules.xml";
         string FILEPATHXSD = AppDomain.CurrentDomain.BaseDirectory + @"trigger-rules.xsd";
 
-        public airMonit_alarm()
+        public AirMonit_Alarm()
         {
             InitializeComponent();
 
-            xmlHandler = new XMLHandler(FILEPATHXML, FILEPATHXSD);
+            try
+            {
+                xmlHandler = new XMLHandler(FILEPATHXML, FILEPATHXSD);
+                particlesRulesDictionary = new Dictionary<string, List<RuleCondition>>();
+                XmlNodeList particles = xmlHandler.GetParticlesList();
+                foreach (XmlNode particle in particles)
+                {
+                    XmlNodeList particleRules = xmlHandler.GetParticleRules(particle.Name);
+                    List<RuleCondition> rulesList = new List<RuleCondition>();
+                    foreach (XmlNode rule in particleRules)
+                    {
+                        try
+                        {
+                            RuleCondition ruleCond = new RuleCondition(rule);
+                            rulesList.Add(ruleCond);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Entry completely ignored: "+ ex.Message);
+                        }
+                        
+                    }
+                    particlesRulesDictionary.Add(particle.Name, rulesList);
+                }
+                    
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("[FAIL LOAD] Loading alarm rules when... " + ex.Message);
+                return;
+            }
+            
+            try
+            {
+                mqttHandler = new MessagingHandler(sTopics, ip, particlesRulesDictionary);
+                mqttHandler.OnNewParticleReceived += new MyEventNewParticleReceived(NewParticleFound);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("[FAIL CONNECTION] Connecting to mqtt when... " + ex.Message);
+                return;
+            }
+            
 
             #region Layout Setup
             btnStopServ.Text = (xmlHandler.alarmServiceStatus()) ? buttonTextStop : buttonTextStart;
@@ -107,12 +154,6 @@ namespace AirMonit_Alarm
 
 
             //Start Service!
-        }
-
-        private void CreateRule(object sender, EventArgs e)
-        {
-            SelectedRule = null;
-            SetAppLayout(CRUD.CREATE);
         }
 
         #endregion
@@ -283,6 +324,12 @@ namespace AirMonit_Alarm
             txtAlertMessage.Text = "";
         }
 
+        private void CreateRule(object sender, EventArgs e)
+        {
+            SelectedRule = null;
+            SetAppLayout(CRUD.CREATE);
+        }
+
         #endregion
 
         #region Btn Apply Delete Revoke Events
@@ -419,6 +466,25 @@ namespace AirMonit_Alarm
         }
 
         #endregion
+
+        private void AirMonit_Alarm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            mqttHandler.disconnectMqtt();
+        }
+
+        public void NewParticleFound(object source, MyEventParticle e)
+        {
+            this.BeginInvoke((MethodInvoker)delegate
+            {
+                Console.WriteLine(e.GetParticle());
+
+                xmlHandler.addNewParticleToSchema(e.GetParticle());
+                xmlHandler.addNewParticleToXML(e.GetParticle());
+
+                PopulateParticlesList();
+            });
+            
+        }
 
     }
 }

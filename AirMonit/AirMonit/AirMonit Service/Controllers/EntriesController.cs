@@ -30,9 +30,9 @@ namespace AirMonit_Service.Controllers
 
         private static string CONNSTR = System.Configuration.ConfigurationManager.ConnectionStrings["AirMonit_Service.Properties.Settings.connStr"].ConnectionString;
         // GET api/<controller>
-        public IEnumerable<Entry> GetEntries()
+        public IEnumerable<ParticleEntry> GetEntries()
         {
-            List<Entry> lista = new List<Entry>();
+            List<ParticleEntry> lista = new List<ParticleEntry>();
             SqlConnection conn = new SqlConnection(CONNSTR);
             try
             {
@@ -44,7 +44,7 @@ namespace AirMonit_Service.Controllers
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    Entry e = new Entry();
+                    ParticleEntry e = new ParticleEntry();
                     e.name = (string)reader["name"];
                     e.val = (decimal)reader["value"];
                     e.date = (DateTime)reader["date"];
@@ -73,7 +73,7 @@ namespace AirMonit_Service.Controllers
         // GET api/<controller>/5
         public IHttpActionResult Get(int id)
         {
-            Entry e = null;
+            ParticleEntry e = null;
             SqlConnection conn = new SqlConnection(CONNSTR);
 
             try
@@ -88,7 +88,7 @@ namespace AirMonit_Service.Controllers
                 SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    e = new Entry();
+                    e = new ParticleEntry();
                     e.name = (string)reader["name"];
                     e.val = (int)reader["value"];
                     e.date = (DateTime)reader["date"];
