@@ -13,18 +13,20 @@ namespace AirMonit_DLog.Models
     {
         #region QUERIES
 
-        private const string SELECT_ALLDISTRICTS_ID_NAME = "SELECT id, name FROM CITIES";
+        private const string SELECT_ALL_CITIES = "SELECT id, name, longitude, latitude FROM CITIES";
+        private const string SELECT_CITY_BY_NAME = "SELECT id FROM Cities WHERE LOWER(name) = @cityName";
+        private const string SELECT_ID_CITY_FROM_NAME = "SELECT id FROM CITIES WHERE name=@city";
         private const string SELECT_ALL_PARTICLES = "SELECT DISTINCT name FROM ENTRIES;";
-        private const string SELECT_CITIES_NOT_IN_AVERAGE = "SELECT DISTINCT id, name FROM CITIES WHERE id NOT IN (SELECT cityId FROM CityAverage);";
+
         private const string INSERT_NEWDISTRICT = "INSERT INTO CITIES VALUES (@name, @latitude, @longitude)";
-        private const string INSERT_ENTRY = "INSERT INTO ENTRIES (name, value, date, cityId) VALUES (@particleName, @value, @date, @cityForeignKey)";
-        private const string INSERT_ALARM = "INSERT INTO ALARMS (particle, condition, conditionValue1, conditionValue2, EntryValue, Message, Date, CityId) VALUES (@particleName, @condition, @conditionValue1, @conditionValue2, @entryValue, @message,  @date, @cityForeignKey)";
+        private const string INSERT_ENTRY = "INSERT INTO ENTRIES (name, value, date, cityId) VALUES (@particleName, @value, @date, (" + SELECT_CITY_BY_NAME + "))";
+        private const string INSERT_ALARM = "INSERT INTO ALARMS (particle, condition, conditionValue1, conditionValue2, EntryValue, Message, Date, CityId) VALUES (@particleName, @condition, @conditionValue1, @conditionValue2, @entryValue, @message,  @date, ("+SELECT_CITY_BY_NAME+"))";
         private const string INSERT_CITY_AVERAGE = "INSERT INTO CityAverage (particle, cityId) VALUES (@particleName, @cityFk);";
-        private const string UPDATE_GLOBAL_AVERAGE = "UPDATE CITYAVERAGE SET SUM = (SUM + @value), count = (count+1), average = ROUND(((SUM + @value) / (count+1)),2) WHERE particle = @particleName AND cityId = @cityId;";
 
         #endregion
 
-        private static string CONNSTR = Settings.Default.connStr;
+        //A connection string esta nos resources porq assim o user nao pode mudar a sua ligação
+        private static string CONNSTR = Resources.connStr;
 
         public static void insertCityInAverage(int cityId)
         {
@@ -72,9 +74,11 @@ namespace AirMonit_DLog.Models
 
         }
 
-        public static int WriteToTableAlarm(AlarmEntry alarmEntry, int cityFK)
+        public static int WriteToTableAlarm(AlarmEntry alarmEntry)
         {
             SqlConnection conn = new SqlConnection(CONNSTR);
+
+             //tenho a cidade string e quero pedir o id dela mas sem ter que iniciar várias coneccoes..
 
             try
             {
@@ -99,8 +103,8 @@ namespace AirMonit_DLog.Models
 
                 cmd.Parameters.AddWithValue("@entryValue", alarmEntry.EntryValue);
                 cmd.Parameters.AddWithValue("@message", alarmEntry.Message);
-                cmd.Parameters.AddWithValue("@date", alarmEntry.Date);//.ToString("yyyy-MM-dd HH:mm:ss"));
-                cmd.Parameters.AddWithValue("@cityForeignKey", cityFK);
+                cmd.Parameters.AddWithValue("@date", alarmEntry.Date);
+                cmd.Parameters.AddWithValue("@cityName", alarmEntry.City.ToLower());
 
                 cmd.Connection = conn;
                 int nRows = cmd.ExecuteNonQuery();
@@ -120,7 +124,7 @@ namespace AirMonit_DLog.Models
         }
 
         //Garantir que quando chamar esta funcao exista a row City na tabela Cities com o id = cityFK
-        public static int WriteToTableEntries(ParticleEntry particleEntry, int cityFK)
+        public static int WriteToTableEntries(ParticleEntry particleEntry)
         {
             SqlConnection conn = new SqlConnection(CONNSTR);
 
@@ -142,7 +146,7 @@ namespace AirMonit_DLog.Models
                 cmd.Parameters.AddWithValue("@particleName", particle);
                 cmd.Parameters.AddWithValue("@value", value);
                 cmd.Parameters.AddWithValue("@date", date);
-                cmd.Parameters.AddWithValue("@cityForeignKey", cityFK);
+                cmd.Parameters.AddWithValue("@cityName", city);
 
                 cmd.Connection = conn;
                 int nRows = cmd.ExecuteNonQuery();
@@ -161,51 +165,10 @@ namespace AirMonit_DLog.Models
             }
         }
 
-        //Atualiza os valores da média das particulas e das cidades
-        public static void UpdateParticleAverage(string particle, decimal value, int cityId)
-        {
-
-            SqlConnection conn = new SqlConnection(CONNSTR);
-
-            try
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand();
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = UPDATE_GLOBAL_AVERAGE;
-
-                cmd.Parameters.AddWithValue("@particleName", particle.ToUpper());
-                cmd.Parameters.AddWithValue("@value", value);
-                cmd.Parameters.AddWithValue("@cityId", cityId);
-                cmd.Connection = conn;
-
-                int nRows = cmd.ExecuteNonQuery();
-
-                conn.Close();
-                if (nRows <= 0)
-                {
-                    Console.WriteLine("Unable to update table CityAverage: ");
-                }
-
-            }
-            catch (Exception ex)
-            {
-                conn.Close();
-                Console.WriteLine("FATAL ERROR: Updating CityAverage table: " + ex.Message);
-            }
-            finally
-            {
-                if (conn.State == System.Data.ConnectionState.Open)
-                {
-                    conn.Close();
-                }
-            }
-        }
-
         /// <summary>
         /// Carrega as cidades que estao na BD para poder saber as PK delas e usar no inser das entries para relacionar a cidade com o record
         /// </summary>
-        public static List<City> GetCities()
+        public static List<City> GetAllCities()
         {
 
             SqlConnection conn = new SqlConnection(CONNSTR);
@@ -215,28 +178,21 @@ namespace AirMonit_DLog.Models
                 conn.Open();
                 SqlCommand cmd = new SqlCommand();
                 cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = SELECT_ALLDISTRICTS_ID_NAME;
+                cmd.CommandText = SELECT_ALL_CITIES;
 
                 cmd.Connection = conn;
                 SqlDataReader reader = cmd.ExecuteReader();
-
-                City city;
+                
                 while (reader.Read())
                 {
-                    city = new City
+                    City city = new City()
                     {
                         ID = (int)reader["Id"],
-                        Name = ((string)reader["name"]).Trim()
+                        Name = (string)reader["name"]
                     };
                     citiesListInDB.Add(city);
                 }
                 reader.Close();
-                if (citiesListInDB.Count <= 0)
-                {
-                    Console.WriteLine("FATAL ERROR: TABLE CITIES IS EMPTY" + Environment.NewLine + "Unable to continue press any key to continue...");
-                    Console.ReadLine();
-                    Environment.Exit(1);
-                }
                 return citiesListInDB;
             }
             catch (Exception ex)
@@ -253,46 +209,8 @@ namespace AirMonit_DLog.Models
                     conn.Close();
                 }
             }
-            return null;
+            return citiesListInDB;
 
-        }
-
-        public static List<int> GetCitiesNotInAverage()
-        {
-            SqlConnection conn = new SqlConnection(CONNSTR);
-            List<int> citiesList = new List<int>();
-            try
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand();
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = SELECT_CITIES_NOT_IN_AVERAGE;
-
-                cmd.Connection = conn;
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    citiesList.Add((int)reader["Id"]);
-                }
-                reader.Close();
-                return citiesList;
-            }
-            catch (Exception ex)
-            {
-                conn.Close();
-                Console.WriteLine("FATAL ERROR: Loading Particles When: " + ex.Message);
-                Console.ReadLine();
-                Environment.Exit(1);
-            }
-            finally
-            {
-                if (conn.State == System.Data.ConnectionState.Open)
-                {
-                    conn.Close();
-                }
-            }
-            return null;
         }
 
         public static List<string> GetParticles()
@@ -333,5 +251,48 @@ namespace AirMonit_DLog.Models
             }
             return particlesList;
         }
+
+        public static int GetCityId(string city)
+        {
+            SqlConnection conn = new SqlConnection(CONNSTR);
+            int cityId = -1;
+
+            try
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = SELECT_ID_CITY_FROM_NAME;
+
+                cmd.Parameters.AddWithValue("city", city);
+
+                cmd.Connection = conn;
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    cityId = (int)reader["id"];
+                    break; //So quero 1 valor
+                }
+                reader.Close();
+                return cityId;
+            }
+            catch (Exception ex)
+            {
+                conn.Close();
+                Console.WriteLine("FATAL ERROR: Loading Particles When: " + ex.Message);
+                Console.ReadLine();
+                Environment.Exit(1);
+            }
+            finally
+            {
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    conn.Close();
+                }
+            }
+            return cityId;
+        }
+        
     }
 }

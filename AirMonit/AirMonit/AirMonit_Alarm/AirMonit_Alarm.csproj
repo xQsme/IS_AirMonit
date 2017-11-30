@@ -70,10 +70,13 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="model\MessagingHandler.cs" />
+    <Compile Include="model\FormException.cs" />
+    <Compile Include="model\MessagingManager.cs" />
+    <Compile Include="model\RuleCondition.cs" />
+    <Compile Include="model\XMLController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="model\XMLHandler.cs" />
+    <Compile Include="model\XMLManager.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

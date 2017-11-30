@@ -1,67 +1,56 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<rules applyRule="true">
-  <NO2 applyRule="true">
-    <rule applyRule="false">
-      <greater>
-        <num>100</num>
-        <msg>Unhealthy for Sensitive Groups</msg>
-      </greater>
-    </rule>
-    <rule applyRule="true">
-      <equals>
-        <num>151</num>
-        <msg>Unhealthy for all beings</msg>
-      </equals>
-    </rule>
-    <rule applyRule="true">
-      <between>
-        <num1>200</num1>
-        <num2>300</num2>
-        <msg>Avoid outside contact</msg>
-      </between>
-    </rule>
-  </NO2>
-  <CO applyRule="false">
-    <rule applyRule="true">
-      <greater>
-        <num></num>
-        <msg></msg>
-      </greater>
-    </rule>
-    <rule applyRule="true">
-      <equals>
-        <num></num>
-        <msg></msg>
-      </equals>
-    </rule>
-    <rule applyRule="true">
-      <between>
-        <num1>12</num1>
-        <num2>30</num2>
-        <msg>Teste...</msg>
-      </between>
-    </rule>
+<rules applyRule="false">
+  <CO>
+    <between applyRule="false">
+      <num1>30</num1>
+      <num2>30</num2>
+      <msg>Teste...</msg>
+    </between>
+    <less applyRule="true">
+      <num>-4</num>
+      <msg>NEVER MIND!</msg>
+    </less>
+    <less applyRule="false">
+      <num>0</num>
+      <msg>asdasdas</msg>
+    </less>
+    <greater applyRule="false">
+      <num>3</num>
+      <msg>sacdsaçlmdçsakmdsal</msg>
+    </greater>
   </CO>
-  <O3 applyRule="true">
-    <rule applyRule="true">
-      <less>
-        <num>30</num>
-        <msg>Level is too low minimize exposure to the sun..</msg>
-      </less>
-    </rule>
-    <rule applyRule="true">
-      <equals>
-        <num>0</num>
-        <msg>Do not go outsite!</msg>
-      </equals>
-    </rule>
-    <rule applyRule="false">
-      <between>
-        <num1>10</num1>
-        <num2>20</num2>
-        <msg>Sun exposure can be very dangerous!</msg>
-      </between>
-    </rule>
+  <O3>
+    <less applyRule="true">
+      <num>30</num>
+      <msg>Level is too low minimize exposure to the sun..</msg>
+    </less>
+    <greater applyRule="true">
+      <num>0</num>
+      <msg>AIAIIAIAIAIIA</msg>
+    </greater>
+    <between applyRule="true">
+      <num1>10</num1>
+      <num2>20</num2>
+      <msg>Sun exposure can be very dangerous!</msg>
+    </between>
   </O3>
-
+  <NO2>
+    <between applyRule="true">
+      <num1>300</num1>
+      <num2>300</num2>
+      <msg>Avoid outside contact dSDASDSASADASDSAD</msg>
+    </between>
+    <greater applyRule="true">
+      <num>0</num>
+      <msg>DSAFADSFASSADFAS</msg>
+    </greater>
+  </NO2>
+  <NOP applyRule="false" />
+  <Oic applyRule="false" />
+  <POOP applyRule="false">
+    <greater applyRule="true">
+      <num>0</num>
+      <msg>POPPINESSS FOR THE WIN!!!</msg>
+    </greater>
+  </POOP>
 </rules>

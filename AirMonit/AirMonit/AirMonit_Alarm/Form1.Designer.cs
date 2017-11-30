@@ -53,6 +53,7 @@
             this.txtXsdPath = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.FileStatusIcon = new System.Windows.Forms.PictureBox();
+            this.btnAddParticle = new System.Windows.Forms.Button();
             this.panelRulesInfo.SuspendLayout();
             this.panelCRUD_Rules.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumBetween2)).BeginInit();
@@ -296,7 +297,7 @@
             // 
             this.btnNewRule.BackColor = System.Drawing.Color.LimeGreen;
             this.btnNewRule.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNewRule.Location = new System.Drawing.Point(234, 32);
+            this.btnNewRule.Location = new System.Drawing.Point(266, 29);
             this.btnNewRule.Name = "btnNewRule";
             this.btnNewRule.Size = new System.Drawing.Size(108, 30);
             this.btnNewRule.TabIndex = 9;
@@ -332,12 +333,26 @@
             this.FileStatusIcon.TabStop = false;
             this.FileStatusIcon.Tag = "";
             // 
+            // btnAddParticle
+            // 
+            this.btnAddParticle.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAddParticle.Location = new System.Drawing.Point(128, 3);
+            this.btnAddParticle.Name = "btnAddParticle";
+            this.btnAddParticle.Size = new System.Drawing.Size(100, 33);
+            this.btnAddParticle.TabIndex = 13;
+            this.btnAddParticle.Text = "New Particles!";
+            this.btnAddParticle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnAddParticle.UseVisualStyleBackColor = true;
+            this.btnAddParticle.Visible = false;
+            this.btnAddParticle.MouseClick += new System.Windows.Forms.MouseEventHandler(this.AddNewParticles);
+            // 
             // AirMonit_Alarm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.ClientSize = new System.Drawing.Size(786, 611);
+            this.Controls.Add(this.btnAddParticle);
             this.Controls.Add(this.FileStatusIcon);
             this.Controls.Add(this.txtXsdPath);
             this.Controls.Add(this.label6);
@@ -385,6 +400,7 @@
         private System.Windows.Forms.TextBox txtXsdPath;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.PictureBox FileStatusIcon;
+        private System.Windows.Forms.Button btnAddParticle;
     }
 }
 

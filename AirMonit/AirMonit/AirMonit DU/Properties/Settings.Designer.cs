@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AirMonit_Alarm.Properties {
+namespace AirMonit_DU.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -25,21 +25,20 @@ namespace AirMonit_Alarm.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
-        public string BrokerIP {
+        public string BrokerIp {
             get {
-                return ((string)(this["BrokerIP"]));
+                return ((string)(this["BrokerIp"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
-            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
-            "tring>dataUploader</string>\r\n  <string>alarm</string>\r\n</ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection Topics {
+        [global::System.Configuration.DefaultSettingValueAttribute("dataUploader")]
+        public string Topic {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["Topics"]));
+                return ((string)(this["Topic"]));
             }
         }
     }

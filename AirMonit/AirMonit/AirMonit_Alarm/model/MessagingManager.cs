@@ -1,4 +1,5 @@
-﻿using IAirEntries;
+﻿using AirMonit_DLog.Models;
+using IAirEntries;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -77,17 +78,26 @@ namespace AirMonit_Alarm
 
         public void disconnectMqtt()
         {
-            mClient.Disconnect();
+            if(mClient.IsConnected)
+                mClient.Disconnect();
         }
 
+        //TODO: Nao ler as regras das particulas que onde applyRule = false
         private void validateParticleWithAlarm(ParticleEntry entry)
         {
             if (rulesDictionary.ContainsKey(entry.name))
             {
                 List<RuleCondition> rulesConditions = rulesDictionary[entry.name];
-
+                if(rulesConditions == null)
+                {
+                    //Novas particulas detetadas começam com a lista a null
+                    return;
+                }
                 foreach (RuleCondition rule in rulesConditions)
                 {
+                    if (!rule.ApplyRule)
+                        continue;
+
                     bool alarmTrigged = false;
                     switch (rule.Condition)
                     {
@@ -126,6 +136,7 @@ namespace AirMonit_Alarm
             {
                 //Mostrar ao utilizador que existe uma nova particula...
                 OnNewParticleReceived(this, new MyEventParticle(entry.name));
+                rulesDictionary.Add(entry.name, null); //Null porq é particula nova logo nao tem regras nenhumas
             }
         }
 

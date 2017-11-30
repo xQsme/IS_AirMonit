@@ -7,6 +7,7 @@ using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
 using IAirEntries;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using AirMonit_DLog.Models;
 
 namespace AirMonit_DLog
@@ -15,21 +16,19 @@ namespace AirMonit_DLog
     {
         
         private static MqttClient mClient;
-        private static string[] sTopics = new[] { "dataUploader", "alarm" };
-        private static string ip = "127.0.0.1";
+        private static StringCollection topicsCollection = Settings.Default.Topics;
+        private static string[] sTopics = new string[] { "", ""};
+        private static string ip = Settings.Default.BrokerIP;
         
-        private static List<City> citiesListInDB = new List<City>();
-        private static List<string> particlesList = new List<string>();
         private static JavaScriptSerializer jssParticleEntry = new JavaScriptSerializer();
         private static JavaScriptSerializer jssAlarmEntry = new JavaScriptSerializer();
 
         static void Main(string[] args)
         {
-            citiesListInDB = DBManager.GetCities();
-            particlesList = DBManager.GetParticles();
+            
+            topicsCollection.CopyTo(sTopics, 0);
             
             //Preparar a tabela para poder receber os dados
-            UpdateCityAverage();
 
             mClient = new MqttClient(ip);
             mClient.Connect(Guid.NewGuid().ToString());
@@ -60,17 +59,11 @@ namespace AirMonit_DLog
             {
                 alarmEntry = jssAlarmEntry.Deserialize<AlarmEntry>(json);
 
-                int cityFK = GetCityForeignKey(alarmEntry.City);
-
-                CheckCityAverageStructure();
-
-                //TODO: Criar a tabela pensar no relacionamente se é que vai haver e criar metodo para inserir na BD
-                if (DBManager.WriteToTableAlarm(alarmEntry, cityFK) > 0)
+                if (DBManager.WriteToTableAlarm(alarmEntry) > 0)
                 {
-
+                    Console.WriteLine("Received from Alarm: " + json);
                 }
-                //Inserted in DB
-                Console.WriteLine("Received from Alarm: " + json);
+                
             }
             catch (Exception ex)
             {
@@ -91,18 +84,9 @@ namespace AirMonit_DLog
 
                 try
                 {
-                    int cityFK = GetCityForeignKey(particleEntry.city);
-                    if (DBManager.WriteToTableEntries(particleEntry, cityFK) > 0)
+                    if (DBManager.WriteToTableEntries(particleEntry) > 0)
                     {
                         Console.WriteLine("Entry added to DB: " + Environment.NewLine);
-                        //Acabou de inserir uma linha entao vamos popular a lista de particulas
-                        if (particlesList.Count == 0)
-                        {
-                            particlesList = DBManager.GetParticles();
-                            UpdateCityAverage();
-                        }
-                        //Garante que so é chamado quando tiver linhas para todas as particulas na CityAverage
-                        DBManager.UpdateParticleAverage(particleEntry.name, particleEntry.val, cityFK);
                     }
                 }
                 catch (Exception ex)
@@ -117,66 +101,6 @@ namespace AirMonit_DLog
             {
                 Console.WriteLine("Parsing JSON went wrong: " + ex.Message);
             }
-        }
-
-        private static int GetCityForeignKey(string city)
-        {
-            //Sem ter que ir sempre á BD procurar a FK pelo name buscar da lista
-            city = city.ToLower();
-            City c = citiesListInDB.Find(ele => ele.Name.ToLower().Equals(city));
-
-            if (c == null)
-            {
-                //NEW CITY FOUND! This class is not responsible for inserting new Cities due to not knowing more then the city name (missing long, lang)
-                List<City> cities = DBManager.GetCities();
-                Console.WriteLine("New city found if you wish to start recording the data please insert in table 'Cities'");
-                //UpdateCityAverage();
-                c = citiesListInDB.Find(ele => ele.Name.ToLower().Equals(city));
-                if(c == null)
-                {
-                    throw new Exception("Tried twice getting Cities from table Cities but not a single city was found");
-                }
-            }
-
-            //TODO: Avisar o User que a Tabela Cities esta vazia e que precisa de ser preenchida
-            //Vai crashar se a BD nao tiver nenhuma cidade...
-            return c.ID;
-        }
-
-
-        /// <summary>
-        /// Vai buscar todas as cidades que nao tenham rows na CityAverage e vai pedir ao DBManager
-        /// Para inserir todas as particulas que existam para essa cidade na tabela CityAverage
-        /// </summary>
-        private static void UpdateCityAverage()
-        {
-            foreach (City c in citiesListInDB)
-            {
-                //Verificar se a cidade está na tabela senao insere todas as particulas 
-                //Verificar se as cidades teem todas uma linha para cada particula
-
-                //grab the cities
-                List<int> citiesInAverageId = DBManager.GetCitiesNotInAverage();
-                foreach (int cityId in citiesInAverageId)
-                {
-                    foreach (string particle in particlesList)
-                    {
-                        //para cada particula na lista particlesList insere uma nova linha limpa
-                        DBManager.insertCityInAverage(cityId, particle);
-                    }
-                }
-            }
-        }
-
-        private static void CheckCityAverageStructure()
-        {
-            //Verificar se existe a cidade na tabela average
-            List<int> citiesMissingInAverage = DBManager.GetCitiesNotInAverage();
-            foreach (int missingCity in citiesMissingInAverage)
-            {
-                DBManager.insertCityInAverage(missingCity);
-            }
-
         }
 
     }
