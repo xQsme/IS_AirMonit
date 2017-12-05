@@ -13,7 +13,6 @@ using System.Web.UI.WebControls;
 
 namespace AirMonit_Service.Controllers
 {
-    [RoutePrefix("api/particles")]
     public class ParticlesController : ApiController
     {
 
@@ -51,7 +50,7 @@ namespace AirMonit_Service.Controllers
         /// <param name="particle">CO</param>
         /// <param name="day">30-11-2017</param>
         /// <returns>IEnumerable<ParticleEntry></returns>
-        [Route("{particle}/day/{day}")]
+        [Route("api/particles/{particle}/day/{day}")]
         //api/particles/CO/day/30-11-2017
         public IEnumerable<ParticleEntry> GetParticleByDate(string particle, string day)
         {
@@ -73,7 +72,7 @@ namespace AirMonit_Service.Controllers
         /// <param name="particle">CO</param>
         /// <param name="day">30-11-2017</param>
         /// <returns>IEnumerable<ParticleEntry></returns>
-        [Route("{particle}/days/{day}")]
+        [Route("api/particles/{particle}/days/{day}")]
         //api/particles/CO/days/27-11-2017_30-11-2017
         public IEnumerable<ParticleEntry> GetParticleBetweenDates(string particle, string day)
         {
@@ -102,7 +101,7 @@ namespace AirMonit_Service.Controllers
         /// <param name="city">Leiria</param>
         /// <param name="day">30-11-2017</param>
         /// <returns>IEnumerable<ParticleEntry></returns>
-        [Route("{particle}/city/{city}/day/{day}")]
+        [Route("api/particles/{particle}/city/{city}/day/{day}")]
         public IEnumerable<ParticleEntry> GetParticleInDay(string particle, string day, string city)
         {
             try
@@ -124,7 +123,7 @@ namespace AirMonit_Service.Controllers
         /// <param name="particle">CO</param>
         /// <param name="day">30-11-2017</param>
         /// <returns>IEnumerable<SummarizeEntries></returns>
-        [Route("{particle}/summarize/day/{day}")]
+        [Route("api/particles/{particle}/summarize/day/{day}")]
         public IEnumerable<SummarizeEntries> GetParticleSummarizeInDayInCity(string particle, string day)
         {
             try
@@ -146,7 +145,7 @@ namespace AirMonit_Service.Controllers
         /// /// <param name="city">Leiria</param>
         /// <param name="day">30-11-2017</param>
         /// <returns>IEnumerable<SummarizeEntries></returns>
-        [Route("{particle}/summarize/city/{city}/day/{day}")]
+        [Route("api/particles/{particle}/summarize/city/{city}/day/{day}")]
         public IEnumerable<SummarizeEntries> GetParticleSummarizeInDayInCity(string particle, string day, string city)
         {
             try
