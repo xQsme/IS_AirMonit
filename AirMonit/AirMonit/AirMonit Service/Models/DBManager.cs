@@ -13,35 +13,20 @@ namespace AirMonit_Service.Models
     class DBManager
     {
         private const string MAX_ROWS_TO_RETURN = "TOP ";
+        public const string SQL_DATE_FORMAT = "yyyy-mm-dd";
         #region QUERIES
-        private const string SELECT_CITY_BY_NAME = "SELECT id FROM Cities WHERE LOWER(name) = LOWER(@cityName)";
+        private const string SELECT_CITY_BY_NAME = "(SELECT id FROM Cities WHERE LOWER(name) = LOWER(@cityName))";
+        private const string SELECT_CITY_NAME_BY_ID = "(SELECT RTRIM(c.name) FROM Cities c WHERE c.id = cityId)";
 
         private const string SELECT_ALL_CITIES = "SELECT id, name, longitude, latitude FROM CITIES";
         private const string SELECT_ALL_PARTICLES = "SELECT DISTINCT name FROM CityAverage;";
-        private const string SELECT_PARTICLE_IN_DAY = "SELECT value FROM Entries WHERE name = @particle AND convert(VARCHAR, @date, 105) = convert(varchar, date, 105)";
-        private const string SELECT_PARTICLE_IN_CITY_DAY = "SELECT value FROM Entries WHERE name = @particle AND convert(VARCHAR, @date, 105) = convert(varchar, date, 105) AND cityId = @city";
-        private const string SELECT_PARTICLE_BETWEEN_DAYS = "SELECT name, value, date FROM Entries WHERE name = @particle AND convert(varchar, date, 105) >= convert(VARCHAR, @start, 105) AND convert(varchar, date, 105) <= convert(VARCHAR, @end, 105)";
-        private const string SELECT_SUMMARIZE_PARTICLE_IN_CITY_DAY = "SELECT MAX(value) as MAX, MIN(value) as MIN, AVG(value) as AVERAGE, DATEPART(HOUR, date) as Hour FROM Entries WHERE name = @particle AND convert(VARCHAR, @date, 105) = convert(varchar, date, 105) AND cityId = @city GROUP BY DATEPART(HOUR, date)";
-        private const string SELECT_SUMMARIZE_PARTICLE_IN_DAY = "SELECT MAX(value) as MAX, MIN(value) as MIN, AVG(value) as AVERAGE, DATEPART(HOUR, date) as Hour FROM Entries WHERE name = @particle AND convert(VARCHAR, @date, 105) = convert(varchar, date, 105) GROUP BY DATEPART(HOUR, date)";
-        private const string SELECT_EVENTS = "SELECT name FROM EVENTS";
-        private const string SELECT_TODAY_CITY_SENSORS = "SELECT TOP 1 name, value, date FROM SENSORS WHERE cityId = "+ SELECT_CITY_BY_NAME + " AND convert(VARCHAR, GETDATE(), 105) = convert(varchar, date, 105)  ORDER BY date DESC";
-        private const string SELECT_TODAY_CITY_INCIDENTS = "SELECT TOP 5 message, publisher, date, event, otherEvent FROM INCIDENT WHERE cityId = "+ SELECT_CITY_BY_NAME + " AND convert(VARCHAR, GETDATE(), 105) = convert(varchar, date, 105)  ORDER BY date DESC";
-        private const string SELECT_ALL_INCIDENTS = "SELECT message, publisher, date, (SELECT name FROM Events e WHERE e.id = eventId) as eventos, otherEvent FROM INCIDENTS ORDER BY date DESC";
-        private const string SELECT_ALL_CITY_SENSORS = "SELECT name, value, date FROM SENSORS WHERE cityId = "+ SELECT_CITY_BY_NAME + " ORDER BY date DESC";
-
-        private const string SELECT_ALL_ENTRIES = "SELECT @TOP name, value, date FROM Entries";
-        private const string SELECT_CITY_ENTRIES = "SELECT @TOP name, value, date, cityId FROM Entries WHERE cityId = " + SELECT_CITY_BY_NAME;
-
-        private const string INSERT_ENTRY = "INSERT INTO ENTRIES (name, value, date, cityId) VALUES (@particleName, @value, @date, (" + SELECT_CITY_BY_NAME + "))";
-        private const string INSERT_ALARM = "INSERT INTO ALARMS (particle, condition, conditionValue1, conditionValue2, EntryValue, Message, Date, CityId) VALUES (@particleName, @condition, @conditionValue1, @conditionValue2, @entryValue, @message,  @date, (" + SELECT_CITY_BY_NAME + "))";
-        private const string INSERT_INCIDENT = "INSERT INTO INCIDENTS (message, publisher, eventId, cityId) VALUES (@message, @publisher, (SELECT id FROM Events WHERE name = @eventName), "+ SELECT_CITY_BY_NAME+")";
-        private const string INSERT_OTHER_INCIDENT = "INSERT INTO INCIDENTS (message, publisher, otherEvent, cityId) VALUES (@message, @publisher, @eventName, "+ SELECT_CITY_BY_NAME + ")";
-        private const string INSERT_SENSOR = "INSERT INTO SENSORS (name, value, cityId) VALUES (@sensor, @value, ("+ SELECT_CITY_BY_NAME + ") )";
+        
         #endregion
 
         //A connection string esta nos resources porq assim o user nao pode mudar a sua ligação
         private static string CONNSTR = Resources.DBConnection;
 
+        private const string INSERT_ALARM = "INSERT INTO ALARMS (particle, condition, conditionValue1, conditionValue2, EntryValue, Message, Date, CityId) VALUES (@particleName, @condition, @conditionValue1, @conditionValue2, @entryValue, @message,  @date, (" + SELECT_CITY_BY_NAME + "))";
         public static int WriteToTableAlarm(AlarmEntry alarmEntry)
         {
             SqlConnection conn = new SqlConnection(CONNSTR);
@@ -91,6 +76,7 @@ namespace AirMonit_Service.Models
             }
         }
 
+        private const string INSERT_ENTRY = "INSERT INTO ENTRIES (name, value, date, cityId) VALUES (@particleName, @value, @date, " + SELECT_CITY_BY_NAME + ")";
         public static int WriteToTableEntries(ParticleEntry particleEntry)
         {
             SqlConnection conn = new SqlConnection(CONNSTR);
@@ -98,10 +84,10 @@ namespace AirMonit_Service.Models
             try
             {
                 //binding dos valores
-                string particle = particleEntry.name;
-                decimal value = particleEntry.val;
-                DateTime date = particleEntry.date;
-                string city = particleEntry.city.ToLower();
+                string particle = particleEntry.Name;
+                decimal value = particleEntry.Value;
+                DateTime date = particleEntry.Date;
+                string city = particleEntry.City.ToLower();
 
                 //Comando sql
                 conn.Open();
@@ -217,6 +203,7 @@ namespace AirMonit_Service.Models
         }
 
         //Como saber se é admin ou se é user normal para poder usar o TOP?
+        private const string SELECT_ALL_ENTRIES = "SELECT @TOP name, value, date, "+SELECT_CITY_NAME_BY_ID+"as city FROM Entries";
         public static List<ParticleEntry> GetAllEntries()
         {
             SqlConnection conn = new SqlConnection(CONNSTR);
@@ -233,9 +220,10 @@ namespace AirMonit_Service.Models
                 while (reader.Read())
                 {
                     ParticleEntry e = new ParticleEntry();
-                    e.name = (string)reader["name"];
-                    e.val = (decimal)reader["value"];
-                    e.date = (DateTime)reader["date"];
+                    e.Name = (string)reader["name"];
+                    e.Value = (decimal)reader["value"];
+                    e.Date = (DateTime)reader["date"];
+                    e.City = (string)reader["city"];
 
                     lista.Add(e);
                 }
@@ -256,6 +244,8 @@ namespace AirMonit_Service.Models
             return lista;
         }
 
+
+        private const string SELECT_CITY_ENTRIES = "SELECT @TOP name, value, date FROM Entries WHERE cityId = " + SELECT_CITY_BY_NAME;
         public static List<ParticleEntry> GetCityEntries(string name)
         {
 
@@ -274,9 +264,10 @@ namespace AirMonit_Service.Models
                 while (reader.Read())
                 {
                     ParticleEntry e = new ParticleEntry();
-                    e.name = (string)reader["name"];
-                    e.val = (decimal)reader["value"];
-                    e.date = (DateTime)reader["date"];
+                    e.Name = (string)reader["name"];
+                    e.Value = (decimal)reader["value"];
+                    e.Date = (DateTime)reader["date"];
+                    e.City = name;
 
                     lista.Add(e);
                 }
@@ -297,7 +288,9 @@ namespace AirMonit_Service.Models
 
         }
 
-        public static List<ParticleEntry> GetParticleInDay(string particle, DateTime dateTime)
+
+        private const string SELECT_PARTICLE_IN_DAY = "SELECT name, value, date, "+SELECT_CITY_NAME_BY_ID+" as city FROM Entries WHERE name = @particle AND convert(VARCHAR, @date, 105) = convert(varchar, date, 105)";
+        public static List<ParticleEntry> GetParticleInDay(string particle, DateTime date)
         {
 
             SqlConnection conn = new SqlConnection(CONNSTR);
@@ -310,12 +303,15 @@ namespace AirMonit_Service.Models
                 cmd.CommandText = SELECT_PARTICLE_IN_DAY;
                 cmd.Connection = conn;
                 cmd.Parameters.AddWithValue("@particle", particle);
-                cmd.Parameters.AddWithValue("@date", dateTime);
+                cmd.Parameters.AddWithValue("@date", date);
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
                     ParticleEntry e = new ParticleEntry();
-                    e.val = (decimal)reader["value"];
+                    e.Name = (string)reader["name"];
+                    e.Value = (decimal)reader["value"];
+                    e.Date = (DateTime)reader["date"];
+                    e.City = (string)reader["city"];
 
                     lista.Add(e);
                 }
@@ -336,6 +332,8 @@ namespace AirMonit_Service.Models
 
         }
 
+
+        private const string SELECT_PARTICLE_BETWEEN_DAYS = "SELECT name, value, date, "+SELECT_CITY_NAME_BY_ID+" as city FROM Entries WHERE name = @particle AND convert(varchar, date, 105) >= convert(VARCHAR, @start, 105) AND convert(varchar, date, 105) <= convert(VARCHAR, @end, 105)";
         public static List<ParticleEntry> GetParticleBetweenDays(string particle, DateTime start, DateTime end)
         {
 
@@ -355,9 +353,10 @@ namespace AirMonit_Service.Models
                 while (reader.Read())
                 {
                     ParticleEntry e = new ParticleEntry();
-                    e.name = (string)reader["name"];
-                    e.val = (decimal)reader["value"];
-                    e.date = (DateTime)reader["date"];
+                    e.Name = (string)reader["name"];
+                    e.Value = (decimal)reader["value"];
+                    e.Date = (DateTime)reader["date"];
+                    e.City = (string)reader["city"];
 
                     lista.Add(e);
                 }
@@ -379,10 +378,12 @@ namespace AirMonit_Service.Models
 
         }
 
-        public static List<ParticleEntry> GetCityEntriesInDay(string particle, string city, DateTime date)
+
+        private const string SELECT_PARTICLE_IN_CITY_DAY = "SELECT value FROM Entries WHERE name = @particle AND convert(VARCHAR, @date, 105) = convert(varchar, date, 105) AND cityId = "+SELECT_CITY_BY_NAME;
+        public static List<decimal> GetCityEntriesInDay(string particle, string city, DateTime date)
         {
             SqlConnection conn = new SqlConnection(CONNSTR);
-            List<ParticleEntry> lista = new List<ParticleEntry>();
+            List<decimal> lista = new List<decimal>();
             try
             {
                 conn.Open();
@@ -392,21 +393,17 @@ namespace AirMonit_Service.Models
                 cmd.Connection = conn;
                 cmd.Parameters.AddWithValue("@particle", particle);
                 cmd.Parameters.AddWithValue("@date", date);
-                cmd.Parameters.AddWithValue("@city", city);
+                cmd.Parameters.AddWithValue("@cityName", city);
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    ParticleEntry e = new ParticleEntry();
-                    e.val = (decimal)reader["value"];
-
-                    lista.Add(e);
+                    lista.Add((decimal)reader["value"]);
                 }
                 reader.Close();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-
             }
             finally
             {
@@ -418,15 +415,16 @@ namespace AirMonit_Service.Models
             return lista;
         }
 
+
+        //OK!
+        private const string SELECT_SUMMARIZE_PARTICLE_IN_DAY = "SELECT MAX(value) as MAX, MIN(value) as MIN, ROUND(AVG(value),2) as AVERAGE, DATEADD(hh, DATEPART(HOUR, date), convert(varchar, @date, 120)) as fullDate, "+SELECT_CITY_NAME_BY_ID+" as city FROM Entries WHERE name = @particle AND convert(VARCHAR, @date, 105) = convert(varchar, date, 105) GROUP BY cityId, DATEPART(HOUR, date) ORDER BY DATEPART(HOUR, date)";
         public static List<SummarizeEntries> GetParticleSummarizeInDay(string particle, DateTime date)
         {
             SqlConnection conn = new SqlConnection(CONNSTR);
             List<SummarizeEntries> lista = new List<SummarizeEntries>();
-            try
-            {
                 conn.Open();
 
-                SqlCommand cmd = new SqlCommand();
+            SqlCommand cmd = new SqlCommand();
                 cmd.CommandText = SELECT_SUMMARIZE_PARTICLE_IN_DAY;
                 cmd.Connection = conn;
                 cmd.Parameters.AddWithValue("@particle", particle);
@@ -435,75 +433,128 @@ namespace AirMonit_Service.Models
                 while (reader.Read())
                 {
                     SummarizeEntries e = new SummarizeEntries();
-                    e.Hour = (DateTime)reader["Hour"];
+                //Converter para o que esta guardado na DB...
+                    e.Particle = particle;
+                    e.Date = (DateTime)reader["fullDate"];
                     e.Max = (decimal)reader["MAX"];
                     e.Min = (decimal)reader["MIN"];
                     e.Average = (decimal)reader["AVERAGE"];
+                    e.City = (string)reader["city"];
 
                     lista.Add(e);
                 }
                 reader.Close();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-
-            }
-            finally
-            {
-                if (conn.State == System.Data.ConnectionState.Open)
-                {
-                    conn.Close();
-                }
-            }
+            
             return lista;
         }
 
+
+        private const string SELECT_SUMMARIZE_PARTICLE_IN_CITY_DAY_BY_HOURS = "SELECT MAX(value) as MAX, MIN(value) as MIN, ROUND(AVG(value),2) as AVERAGE, DATEPART(HOUR, date) as hour, " + SELECT_CITY_NAME_BY_ID + " as city FROM Entries WHERE name = @particle AND convert(VARCHAR, @date, 105) = convert(varchar, date, 105) AND cityId = " + SELECT_CITY_BY_NAME+ " GROUP BY cityId, DATEPART(HOUR, date) ORDER BY DATEPART(HOUR, date)";
         public static List<SummarizeEntries> GetSummarizeCityEntriesInDay(string particle, string city, DateTime date)
         {
+
             SqlConnection conn = new SqlConnection(CONNSTR);
             List<SummarizeEntries> lista = new List<SummarizeEntries>();
-            try
-            {
+            
                 conn.Open();
 
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = SELECT_PARTICLE_IN_CITY_DAY;
+                cmd.CommandText = SELECT_SUMMARIZE_PARTICLE_IN_CITY_DAY_BY_HOURS;
                 cmd.Connection = conn;
                 cmd.Parameters.AddWithValue("@particle", particle);
                 cmd.Parameters.AddWithValue("@date", date);
-                cmd.Parameters.AddWithValue("@city", city);
+                cmd.Parameters.AddWithValue("@cityName", city);
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
+                    int hour = (int)reader["hour"];
                     SummarizeEntries e = new SummarizeEntries();
-                    e.Hour = (DateTime)reader["Hour"];
+                    e.Particle = particle;
+                    e.Date = new DateTime(date.Year, date.Month, date.Day, hour, 0, 0);
                     e.Max = (decimal)reader["MAX"];
                     e.Min = (decimal)reader["MIN"];
                     e.Average = (decimal)reader["AVERAGE"];
+                    e.City = (string)reader["city"];
 
+                lista.Add(e);
+                }
+                reader.Close();
+            
+            return lista;
+        }
+
+
+        private const string SELECT_SUMMARIZE_PARTICLE_IN_DAYS_BY_DAY = "SELECT MAX(value) as MAX, MIN(value) as MIN, ROUND(AVG(value),2) as AVERAGE, DATEPART(day, date) as day, " + SELECT_CITY_NAME_BY_ID + " as city FROM Entries WHERE name = @particle AND convert(varchar, date, 105) >= convert(VARCHAR, @start, 105) AND convert(varchar, date, 105) <= convert(VARCHAR, @end, 105) GROUP BY cityId, DATEPART(day, date) ORDER BY DATEPART(day, date)";
+        public static IEnumerable<SummarizeEntries> GetParticleSummarizeInDay(string particle, DateTime start, DateTime end)
+        {
+            SqlConnection conn = new SqlConnection(CONNSTR);
+            List<SummarizeEntries> lista = new List<SummarizeEntries>();
+            
+                conn.Open();
+
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = SELECT_SUMMARIZE_PARTICLE_IN_DAYS_BY_DAY;
+                cmd.Connection = conn;
+                cmd.Parameters.AddWithValue("@particle", particle);
+                cmd.Parameters.AddWithValue("@start", start);
+                cmd.Parameters.AddWithValue("@end", end);
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    int dia = (int)reader["day"];
+                    SummarizeEntries e = new SummarizeEntries(); 
+                    e.Particle = particle;
+                    e.Date = new DateTime(start.Year, start.Month, dia);
+                    e.Max = (decimal)reader["MAX"];
+                    e.Min = (decimal)reader["MIN"];
+                    e.Average = (decimal)reader["AVERAGE"];
+                    e.City = (string)reader["city"];
                     lista.Add(e);
                 }
                 reader.Close();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-
-            }
-            finally
-            {
-                if (conn.State == System.Data.ConnectionState.Open)
-                {
-                    conn.Close();
-                }
-            }
+            
             return lista;
+
+        }
+
+        private const string SELECT_SUMMARIZE_PARTICLE_IN_CITY_DAYS_BY_DAY = "SELECT MAX(value) as MAX, MIN(value) as MIN, ROUND(AVG(value),2) as AVERAGE, DATEPART(day, date) as day, " + SELECT_CITY_NAME_BY_ID + " as city FROM Entries WHERE name = @particle AND convert(varchar, date, 105) >= convert(VARCHAR, @start, 105) AND convert(varchar, date, 105) <= convert(VARCHAR, @end, 105) AND cityId = "+SELECT_CITY_BY_NAME+" GROUP BY cityId, DATEPART(day, date) ORDER BY DATEPART(day, date)";
+        public static IEnumerable<SummarizeEntries> GetParticlesSummarizeInDaysInCity(string particle, string city, DateTime start, DateTime end)
+        {
+            SqlConnection conn = new SqlConnection(CONNSTR);
+            List<SummarizeEntries> lista = new List<SummarizeEntries>();
+
+            conn.Open();
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = SELECT_SUMMARIZE_PARTICLE_IN_CITY_DAYS_BY_DAY;
+            cmd.Connection = conn;
+            cmd.Parameters.AddWithValue("@particle", particle);
+            cmd.Parameters.AddWithValue("@start", start);
+            cmd.Parameters.AddWithValue("@end", end);
+            cmd.Parameters.AddWithValue("@cityName", city);
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                int dia = (int)reader["day"];
+                SummarizeEntries e = new SummarizeEntries();
+                e.Particle = particle;
+                e.Date = new DateTime(start.Year, start.Month, dia);
+                e.Max = (decimal)reader["MAX"];
+                e.Min = (decimal)reader["MIN"];
+                e.Average = (decimal)reader["AVERAGE"];
+                e.City = (string)reader["city"];
+                lista.Add(e);
+            }
+            reader.Close();
+
+            return lista;
+
         }
 
 
         #region TAES
-        
+
+        private const string SELECT_EVENTS = "SELECT name FROM EVENTS";
         public static List<string> GetEvents()
         {
 
@@ -541,6 +592,8 @@ namespace AirMonit_Service.Models
 
         }
 
+
+        private const string SELECT_TODAY_CITY_SENSORS = "SELECT TOP 1 name, value, date FROM SENSORS WHERE cityId = " + SELECT_CITY_BY_NAME + " AND convert(VARCHAR, GETDATE(), 105) = convert(varchar, date, 105)  ORDER BY date DESC";
         public static List<SensorEntry> GetLastSensorsInCity(string city)
         {
 
@@ -582,6 +635,8 @@ namespace AirMonit_Service.Models
 
         }
 
+
+        private const string SELECT_ALL_CITY_SENSORS = "SELECT name, value, date FROM SENSORS WHERE cityId = " + SELECT_CITY_BY_NAME + " ORDER BY date DESC";
         public static List<SensorEntry> GetAllSensorsCity(string city)
         {
 
@@ -623,6 +678,8 @@ namespace AirMonit_Service.Models
 
         }
 
+
+        private const string SELECT_TODAY_CITY_INCIDENTS = "SELECT TOP 5 message, publisher, date, event, otherEvent FROM INCIDENT WHERE cityId = " + SELECT_CITY_BY_NAME + " AND convert(VARCHAR, GETDATE(), 105) = convert(varchar, date, 105)  ORDER BY date DESC";
         public static List<IncidentEntry> GetLastIncidentsInCity(string city)
         {
 
@@ -667,6 +724,8 @@ namespace AirMonit_Service.Models
 
         }
 
+
+        private const string SELECT_ALL_INCIDENTS = "SELECT message, publisher, date, (SELECT name FROM Events e WHERE e.id = eventId) as eventos, otherEvent FROM INCIDENTS ORDER BY date DESC";
         public static List<IncidentEntry> GetAllIncidents()
         {
 
@@ -697,6 +756,8 @@ namespace AirMonit_Service.Models
 
         }
 
+
+        private const string INSERT_SENSOR = "INSERT INTO SENSORS (name, value, cityId) VALUES (@sensor, @value, " + SELECT_CITY_BY_NAME + " )";
         public static int InsertSensor(SensorEntry entry)
         {
 
@@ -737,10 +798,13 @@ namespace AirMonit_Service.Models
 
         }
 
+
+        private const string INSERT_INCIDENT = "INSERT INTO INCIDENTS (message, publisher, date, eventId, cityId) VALUES (@message, @publisher, @date, (SELECT id FROM Events WHERE LOWER(name) = LOWER(@eventName)), " + SELECT_CITY_BY_NAME + ")";
+        private const string INSERT_OTHER_INCIDENT = "INSERT INTO INCIDENTS (message, publisher, date, otherEvent, cityId) VALUES (@message, @publisher, @date, @eventName, " + SELECT_CITY_BY_NAME + ")";
         public static int InsertIncident(IncidentEntry entry)
         {
-
             SqlConnection conn = new SqlConnection(CONNSTR);
+            string query = "";
             try
             {
                 //binding dos valores
@@ -751,7 +815,7 @@ namespace AirMonit_Service.Models
                 string city = entry.City;
                 string publisher = entry.Publisher;
 
-                string query = (evento == "" && otherEvent != "") ? INSERT_OTHER_INCIDENT : INSERT_INCIDENT;
+                query = (evento == "" && otherEvent != "") ? INSERT_OTHER_INCIDENT : INSERT_INCIDENT;
                 string eventName = (evento == "" && otherEvent != "") ? otherEvent : evento ;
                 //Comando sql
                 conn.Open();
@@ -777,6 +841,7 @@ namespace AirMonit_Service.Models
             {
                 if (conn.State == System.Data.ConnectionState.Open)
                 {
+                    LogHelper.WriteLog(ex.Message, query);
                     conn.Close();
                 }
                 Console.WriteLine("SQL: " + ex.Message);
@@ -784,6 +849,7 @@ namespace AirMonit_Service.Models
             }
 
         }
+
         #endregion
 
     }

@@ -490,7 +490,7 @@
         <!-- Badly formed XML comment ignored for member "M:AirMonit_Service.Controllers.ParticlesController.GetParticleByDate(System.String,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:AirMonit_Service.Controllers.ParticlesController.GetParticleBetweenDates(System.String,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:AirMonit_Service.Controllers.ParticlesController.GetParticleInDay(System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:AirMonit_Service.Controllers.ParticlesController.GetParticleSummarizeInDayInCity(System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:AirMonit_Service.Controllers.ParticlesController.GetParticleSummarizeInDay(System.String,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:AirMonit_Service.Controllers.ParticlesController.GetParticleSummarizeInDayInCity(System.String,System.String,System.String)" -->
         <member name="M:AirMonit_Service.Models.DBManager.GetAllCities">
             <summary>

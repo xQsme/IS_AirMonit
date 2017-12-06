@@ -4,10 +4,10 @@ namespace IAirEntries
 {
     public class ParticleEntry
     {
-        public string name { get; set; }
-        public decimal val { get; set; }
-        public DateTime date { get; set; }
-        public string city { get; set; }
+        public string Name { get; set; }
+        public decimal Value { get; set; }
+        public DateTime Date { get; set; }
+        public string City { get; set; }
         
     }
 }

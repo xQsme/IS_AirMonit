@@ -50,15 +50,31 @@ namespace AirMonit_Service.Controllers
         }
 
         [Route("api/cities/{city}/sensors")]
-        public void PostCitySensor(string city, [FromBody]string json)
+        public IHttpActionResult PostCitySensor(string city, [FromBody]SensorEntry sensorEntry)
         {
-            DBManager.InsertSensor(new SensorEntry());
+            int rows = DBManager.InsertSensor(sensorEntry);
+            if(rows > 0)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [Route("api/cities/{city}/incidents")]
-        public void PostCityIncident(string city, [FromBody]string json)
+        public IHttpActionResult PostCityIncident(string city, [FromBody]IncidentEntry incidentEntry)
         {
-            DBManager.InsertIncident(new IncidentEntry());
+            int rows = DBManager.InsertIncident(incidentEntry);
+            if(rows <= 0)
+            {
+                return BadRequest(LogHelper.GetLog());
+            }
+            else {
+                return Ok();
+            }
+            
         }
     }
 }

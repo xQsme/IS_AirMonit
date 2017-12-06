@@ -91,10 +91,10 @@ namespace IAirEntries
             try
             {
                 //binding dos valores
-                string particle = particleEntry.name;
-                decimal value = particleEntry.val;
-                DateTime date = particleEntry.date;
-                string city = particleEntry.city.ToLower();
+                string particle = particleEntry.Name;
+                decimal value = particleEntry.Value;
+                DateTime date = particleEntry.Date;
+                string city = particleEntry.City.ToLower();
 
                 //Comando sql
                 conn.Open();
@@ -227,9 +227,9 @@ namespace IAirEntries
                 while (reader.Read())
                 {
                     ParticleEntry e = new ParticleEntry();
-                    e.name = (string)reader["name"];
-                    e.val = (decimal)reader["value"];
-                    e.date = (DateTime)reader["date"];
+                    e.Name = (string)reader["name"];
+                    e.Value = (decimal)reader["value"];
+                    e.Date = (DateTime)reader["date"];
 
                     lista.Add(e);
                 }
@@ -268,9 +268,9 @@ namespace IAirEntries
                 while (reader.Read())
                 {
                     ParticleEntry e = new ParticleEntry();
-                    e.name = (string)reader["name"];
-                    e.val = (decimal)reader["value"];
-                    e.date = (DateTime)reader["date"];
+                    e.Name = (string)reader["name"];
+                    e.Value = (decimal)reader["value"];
+                    e.Date = (DateTime)reader["date"];
 
                     lista.Add(e);
                 }
@@ -310,7 +310,7 @@ namespace IAirEntries
                 while (reader.Read())
                 {
                     ParticleEntry e = new ParticleEntry();
-                    e.val = (decimal)reader["value"];
+                    e.Value = (decimal)reader["value"];
 
                     lista.Add(e);
                 }
@@ -351,9 +351,9 @@ namespace IAirEntries
                 while (reader.Read())
                 {
                     ParticleEntry e = new ParticleEntry();
-                    e.name = (string)reader["name"];
-                    e.val = (decimal)reader["value"];
-                    e.date = (DateTime)reader["date"];
+                    e.Name = (string)reader["name"];
+                    e.Value = (decimal)reader["value"];
+                    e.Date = (DateTime)reader["date"];
 
                     lista.Add(e);
                 }
