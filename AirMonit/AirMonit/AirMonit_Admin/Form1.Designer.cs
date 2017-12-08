@@ -28,9 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -41,21 +40,19 @@
             this.label4 = new System.Windows.Forms.Label();
             this.listViewAlarme = new System.Windows.Forms.ListView();
             this.label5 = new System.Windows.Forms.Label();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
             // 
             // chart1
             // 
-            chartArea3.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.chart1.Legends.Add(legend3);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(295, 81);
             this.chart1.Name = "chart1";
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.chart1.Series.Add(series3);
             this.chart1.Size = new System.Drawing.Size(689, 357);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
@@ -93,7 +90,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 177);
+            this.label3.Location = new System.Drawing.Point(13, 511);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(98, 17);
             this.label3.TabIndex = 4;
@@ -102,7 +99,7 @@
             // dateTimePickerInicio
             // 
             this.dateTimePickerInicio.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.dateTimePickerInicio.Location = new System.Drawing.Point(16, 197);
+            this.dateTimePickerInicio.Location = new System.Drawing.Point(16, 531);
             this.dateTimePickerInicio.Name = "dateTimePickerInicio";
             this.dateTimePickerInicio.Size = new System.Drawing.Size(260, 26);
             this.dateTimePickerInicio.TabIndex = 5;
@@ -112,7 +109,7 @@
             // 
             this.dateTimePickerFim.CustomFormat = "";
             this.dateTimePickerFim.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.dateTimePickerFim.Location = new System.Drawing.Point(16, 283);
+            this.dateTimePickerFim.Location = new System.Drawing.Point(16, 617);
             this.dateTimePickerFim.Name = "dateTimePickerFim";
             this.dateTimePickerFim.Size = new System.Drawing.Size(260, 26);
             this.dateTimePickerFim.TabIndex = 7;
@@ -121,7 +118,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(13, 263);
+            this.label4.Location = new System.Drawing.Point(13, 597);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(88, 17);
             this.label4.TabIndex = 6;
@@ -129,9 +126,9 @@
             // 
             // listViewAlarme
             // 
-            this.listViewAlarme.Location = new System.Drawing.Point(16, 466);
+            this.listViewAlarme.Location = new System.Drawing.Point(295, 466);
             this.listViewAlarme.Name = "listViewAlarme";
-            this.listViewAlarme.Size = new System.Drawing.Size(975, 267);
+            this.listViewAlarme.Size = new System.Drawing.Size(696, 267);
             this.listViewAlarme.TabIndex = 8;
             this.listViewAlarme.UseCompatibleStateImageBehavior = false;
             // 
@@ -139,17 +136,36 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label5.Location = new System.Drawing.Point(16, 443);
+            this.label5.Location = new System.Drawing.Point(12, 480);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(76, 20);
             this.label5.TabIndex = 9;
             this.label5.Text = "Alarmes:";
+            // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.dateTimePicker1.Location = new System.Drawing.Point(16, 197);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(260, 26);
+            this.dateTimePicker1.TabIndex = 11;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(13, 177);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(145, 17);
+            this.label6.TabIndex = 10;
+            this.label6.Text = "Data de Visualização:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(996, 745);
+            this.Controls.Add(this.dateTimePicker1);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.listViewAlarme);
             this.Controls.Add(this.dateTimePickerFim);
@@ -162,6 +178,7 @@
             this.Controls.Add(this.chart1);
             this.Name = "Form1";
             this.Text = "AirMonit Admin";
+            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -180,6 +197,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ListView listViewAlarme;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private System.Windows.Forms.Label label6;
     }
 }
 
