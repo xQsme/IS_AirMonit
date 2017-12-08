@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IAirEntries", "IAirEntries\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit_Alarm", "AirMonit_Alarm\AirMonit_Alarm.csproj", "{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirMonit_Admin", "AirMonit_Admin\AirMonit_Admin.csproj", "{AEE9A7BD-9F87-4B98-866E-7955B4559A27}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBE0A1F8-8D7F-44E1-8157-A1AA8436DE2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEE9A7BD-9F87-4B98-866E-7955B4559A27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEE9A7BD-9F87-4B98-866E-7955B4559A27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEE9A7BD-9F87-4B98-866E-7955B4559A27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEE9A7BD-9F87-4B98-866E-7955B4559A27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
