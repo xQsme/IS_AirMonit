@@ -85,7 +85,8 @@ namespace AirMonit_Admin
 
         public void getParticles()
         {
-            string particles_uri = BASE_URL + string.Format(PARTICLES_ENDPOINT, "CO", "29-11-2017", "30-11-2017");
+            string selectedDate = dateTimePicker1.Value.ToString("dd-MM-yyyy");
+            string particles_uri = BASE_URL + string.Format(PARTICLES_ENDPOINT, "CO", selectedDate, selectedDate);
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(particles_uri);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -142,6 +143,11 @@ namespace AirMonit_Admin
         private void Form1_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void dateTimePicker1_ValueChanged_1(object sender, EventArgs e)
+        {
+            getParticles();
         }
     }
     public class ComboboxItem
