@@ -52,10 +52,10 @@ namespace AirMonit_DU
 
             try
             {
-                currentEntry.name = array[1];
-                currentEntry.val = int.Parse(array[2]);
-                currentEntry.date = Convert.ToDateTime(array[3]);
-                currentEntry.city =  array[4];
+                currentEntry.Name = array[1];
+                currentEntry.Value = int.Parse(array[2]);
+                currentEntry.Date = Convert.ToDateTime(array[3]);
+                currentEntry.City =  array[4];
 
             }
             catch (Exception ex)

@@ -85,9 +85,9 @@ namespace AirMonit_Alarm
         //TODO: Nao ler as regras das particulas que onde applyRule = false
         private void validateParticleWithAlarm(ParticleEntry entry)
         {
-            if (rulesDictionary.ContainsKey(entry.name))
+            if (rulesDictionary.ContainsKey(entry.Name))
             {
-                List<RuleCondition> rulesConditions = rulesDictionary[entry.name];
+                List<RuleCondition> rulesConditions = rulesDictionary[entry.Name];
                 if(rulesConditions == null)
                 {
                     //Novas particulas detetadas começam com a lista a null
@@ -102,28 +102,28 @@ namespace AirMonit_Alarm
                     switch (rule.Condition)
                     {
                         case Condition.LESS:
-                            alarmTrigged = LessThan(rule.Value1, entry.val);
+                            alarmTrigged = LessThan(rule.Value1, entry.Value);
                             break;
                         case Condition.GREATER:
-                            alarmTrigged = GreaterThan(rule.Value1, entry.val);
+                            alarmTrigged = GreaterThan(rule.Value1, entry.Value);
                             break;
                         case Condition.EQUALS:
-                            alarmTrigged = Equals(rule.Value1, entry.val);
+                            alarmTrigged = Equals(rule.Value1, entry.Value);
                             break;
                         case Condition.BETWEEN:
-                            alarmTrigged = Between(rule.Value1, rule.Value2, entry.val);
+                            alarmTrigged = Between(rule.Value1, rule.Value2, entry.Value);
                             break;
                     }
                     if (alarmTrigged)
                     {
                         AlarmEntry alarmEntry = new AlarmEntry
                         {
-                            Particle = entry.name,
+                            Particle = entry.Name,
                             Condition = rule.Condition.ToString(),
                             ConditionValues = new decimal[] { rule.Value1, rule.Value2 },
-                            Date = entry.date,
-                            City = entry.city,
-                            EntryValue = entry.val,
+                            Date = entry.Date,
+                            City = entry.City,
+                            EntryValue = entry.Value,
                             Message = rule.Message
                         };
                         //call mqtt to publish!
@@ -135,8 +135,8 @@ namespace AirMonit_Alarm
             else
             {
                 //Mostrar ao utilizador que existe uma nova particula...
-                OnNewParticleReceived(this, new MyEventParticle(entry.name));
-                rulesDictionary.Add(entry.name, null); //Null porq é particula nova logo nao tem regras nenhumas
+                OnNewParticleReceived(this, new MyEventParticle(entry.Name));
+                rulesDictionary.Add(entry.Name, null); //Null porq é particula nova logo nao tem regras nenhumas
             }
         }
 

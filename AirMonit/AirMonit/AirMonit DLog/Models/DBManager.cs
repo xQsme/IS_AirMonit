@@ -84,10 +84,10 @@ namespace AirMonit_DLog.Models
             try
             {
                 //binding dos valores
-                string particle = particleEntry.name;
-                decimal value = particleEntry.val;
-                DateTime date = particleEntry.date;
-                string city = particleEntry.city.ToLower();
+                string particle = particleEntry.Name;
+                decimal value = particleEntry.Value;
+                DateTime date = particleEntry.Date;
+                string city = particleEntry.City.ToLower();
 
                 //Comando sql
                 conn.Open();
