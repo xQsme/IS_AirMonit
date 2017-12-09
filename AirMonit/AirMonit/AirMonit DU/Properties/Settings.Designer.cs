@@ -25,20 +25,20 @@ namespace AirMonit_DU.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
-        public string BrokerIp {
+        [global::System.Configuration.DefaultSettingValueAttribute("dataUploader")]
+        public string Topic {
             get {
-                return ((string)(this["BrokerIp"]));
+                return ((string)(this["Topic"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("dataUploader")]
-        public string Topic {
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        public string BrokerIp {
             get {
-                return ((string)(this["Topic"]));
+                return ((string)(this["BrokerIp"]));
             }
         }
     }

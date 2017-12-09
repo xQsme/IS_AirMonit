@@ -59,9 +59,9 @@ namespace AirMonit_Alarm
                 LoadXmlRulesDictionary();
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                MessageBox.Show("[FAIL LOAD] Loading alarm rules when... " + ex.Message);
+                MessageBox.Show("[FAIL LOAD] Loading alarm rules when: " + ex.Message);
                 return;
             }
 

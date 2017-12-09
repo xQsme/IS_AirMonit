@@ -28,7 +28,7 @@
         <xs:element name="between" type="conditionParamsBETWEEN" minOccurs="0"/>
 
     </xs:choice>
-    <!--<xs:attribute name="applyRule" type="xs:boolean"/>-->
+    <xs:attribute name="applyRule" type="xs:boolean"/>
   </xs:complexType>
 
   <!-- Conteudo dos complexTypes -->

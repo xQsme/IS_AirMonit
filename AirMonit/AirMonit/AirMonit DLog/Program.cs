@@ -15,11 +15,13 @@ namespace AirMonit_DLog
     class Program
     {
         
-        private static MqttClient mClient;
+        private static MqttClient mClientDU;
+        private static MqttClient mClientAlarm;
         private static StringCollection topicsCollection = Settings.Default.Topics;
         private static string[] sTopics = new string[] { "", ""};
-        private static string ip = Settings.Default.BrokerIP;
-        
+        private static string ipDU = Settings.Default.BrokerIPDU;
+        private static string ipAlarm = Settings.Default.BrokerIPAlarm;
+
         private static JavaScriptSerializer jssParticleEntry = new JavaScriptSerializer();
         private static JavaScriptSerializer jssAlarmEntry = new JavaScriptSerializer();
 
@@ -27,14 +29,48 @@ namespace AirMonit_DLog
         {
             
             topicsCollection.CopyTo(sTopics, 0);
-            
-            //Preparar a tabela para poder receber os dados
 
-            mClient = new MqttClient(ip);
-            mClient.Connect(Guid.NewGuid().ToString());
-            mClient.MqttMsgPublishReceived += MClient_MqttMsgPublishReceived;
+            //Preparar a tabela para poder receber os dados
+            manageIPMqttConfiguration(sTopics, ipDU, ipAlarm);
+            
+        }
+
+        private static void manageIPMqttConfiguration(string[] sTopics, string ipDU, string ipAlarm)
+        {
             byte[] qosLevels = { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE };
-            mClient.Subscribe(sTopics, qosLevels);
+
+            //Caso a msm maquina tenha tanto o DU como o Alarm
+            if (ipDU.Equals(ipAlarm))
+            {
+                mClientDU = new MqttClient(ipDU);
+                mClientAlarm = mClientDU;
+
+                mClientDU.Connect(Guid.NewGuid().ToString());
+
+                mClientDU.MqttMsgPublishReceived += MClient_MqttMsgPublishReceived;
+
+                mClientDU.Subscribe(sTopics, qosLevels);
+                
+            }
+            else
+            {
+                //Caso o DU e o Alarm estejam em máquinas diferentes
+                mClientDU = new MqttClient(ipDU);
+                mClientAlarm = new MqttClient(ipAlarm);
+
+                mClientDU.Connect(Guid.NewGuid().ToString());
+                mClientAlarm.Connect(Guid.NewGuid().ToString());
+
+                mClientDU.MqttMsgPublishReceived += MClient_MqttMsgPublishReceived;
+                mClientAlarm.MqttMsgPublishReceived += MClient_MqttMsgPublishReceived;
+
+                string[] duTopic = new string[] {sTopics[0]};
+                string[] alarmTopic = new string[] { sTopics[1] };
+                mClientDU.Subscribe(duTopic, qosLevels);
+                mClientAlarm.Subscribe(alarmTopic, qosLevels);
+
+            }
+            
         }
 
         private static void MClient_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
