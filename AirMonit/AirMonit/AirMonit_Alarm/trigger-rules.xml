@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <rules applyRule="false">
-  <CO>
+  <CO applyRule="true">
     <between applyRule="false">
       <num1>30</num1>
       <num2>30</num2>
@@ -19,7 +19,7 @@
       <msg>sacdsaçlmdçsakmdsal</msg>
     </greater>
   </CO>
-  <O3>
+  <O3 applyRule="true">
     <less applyRule="true">
       <num>30</num>
       <msg>Level is too low minimize exposure to the sun..</msg>
@@ -34,7 +34,7 @@
       <msg>Sun exposure can be very dangerous!</msg>
     </between>
   </O3>
-  <NO2>
+  <NO2 applyRule="false">
     <between applyRule="true">
       <num1>300</num1>
       <num2>300</num2>
