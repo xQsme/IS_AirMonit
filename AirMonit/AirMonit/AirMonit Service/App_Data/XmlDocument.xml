@@ -492,11 +492,6 @@
         <!-- Badly formed XML comment ignored for member "M:AirMonit_Service.Controllers.ParticlesController.GetParticleInDay(System.String,System.String,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:AirMonit_Service.Controllers.ParticlesController.GetParticleSummarizeInDay(System.String,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:AirMonit_Service.Controllers.ParticlesController.GetParticleSummarizeInDayInCity(System.String,System.String,System.String)" -->
-        <member name="M:AirMonit_Service.Models.DBManager.GetAllCities">
-            <summary>
-            Carrega as cidades que estao na BD para poder saber as PK delas e usar no inser das entries para relacionar a cidade com o record
-            </summary>
-        </member>
         <member name="T:AirMonit_Service.Properties.Resources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.

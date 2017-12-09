@@ -8,6 +8,5 @@ namespace IAirEntries
         public decimal Value { get; set; }
         public DateTime Date { get; set; }
         public string City { get; set; }
-        
     }
 }

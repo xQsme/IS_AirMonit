@@ -81,7 +81,7 @@ namespace AirMonit_Service.Controllers
         /// <param name="day">30-11-2017</param>
         /// <returns>IEnumerable<ParticleEntry></returns>
         [Route("api/particles/{particle}/city/{city}/day/{day}")]
-        public IEnumerable<decimal> GetParticleInDay(string particle, string day, string city)
+        public IEnumerable<ParticleEntry> GetParticleInDay(string particle, string day, string city)
         {
                 DateTime date = DateTime.Parse(day);
                 return DBManager.GetCityEntriesInDay(particle, city, date);

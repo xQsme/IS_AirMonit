@@ -67,14 +67,15 @@ namespace AirMonit_Service.Controllers
         public IHttpActionResult PostCityIncident(string city, [FromBody]IncidentEntry incidentEntry)
         {
             int rows = DBManager.InsertIncident(incidentEntry);
-            if(rows <= 0)
+            if(rows > 0)
             {
-                return BadRequest(LogHelper.GetLog());
-            }
-            else {
                 return Ok();
             }
-            
+            else {
+                return BadRequest(LogHelper.GetLog());
+            }
+
         }
+
     }
 }
