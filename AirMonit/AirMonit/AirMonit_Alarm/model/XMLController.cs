@@ -43,13 +43,16 @@ namespace AirMonit_Alarm.model
 
         }
 
-        public List<string> GetParticlesName()
+        public List<ParticleTag> GetParticlesName()
         {
-            List<string> temp = new List<string>();
+            List<ParticleTag> temp = new List<ParticleTag>();
             foreach(XmlNode node in xmlManager.GetParticlesList()){
                 if(node != null)
                 {
-                    temp.Add(node.Name);
+                    ParticleTag ptag = new ParticleTag();
+                    ptag.ApplyRule = bool.Parse(node.Attributes["applyRule"].InnerText);
+                    ptag.Name = node.Name;
+                    temp.Add(ptag);
                 }
             }
             return temp;
@@ -172,6 +175,11 @@ namespace AirMonit_Alarm.model
             }
             return isValid;
         }
-        
+
+        public void UpdateParticleStatus(string particle, bool status)
+        {
+            xmlManager.UpdateParticleStatus(particle, status);
+            xmlManager.Save();
+        }
     }
 }

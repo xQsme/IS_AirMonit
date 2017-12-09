@@ -30,6 +30,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panelRulesInfo = new System.Windows.Forms.Panel();
             this.listParticleRules = new System.Windows.Forms.ListView();
             this.listAirParticles = new System.Windows.Forms.ListView();
@@ -54,11 +55,15 @@
             this.label6 = new System.Windows.Forms.Label();
             this.FileStatusIcon = new System.Windows.Forms.PictureBox();
             this.btnAddParticle = new System.Windows.Forms.Button();
+            this.popUpMenuOptions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.applyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.revokeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelRulesInfo.SuspendLayout();
             this.panelCRUD_Rules.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumBetween2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumToCompare)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FileStatusIcon)).BeginInit();
+            this.popUpMenuOptions.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelRulesInfo
@@ -94,6 +99,7 @@
             this.listAirParticles.TabIndex = 3;
             this.listAirParticles.UseCompatibleStateImageBehavior = false;
             this.listAirParticles.SelectedIndexChanged += new System.EventHandler(this.DisplayRules);
+            this.listAirParticles.MouseClick += new System.Windows.Forms.MouseEventHandler(this.showOptionsMenu);
             // 
             // panelCRUD_Rules
             // 
@@ -340,11 +346,35 @@
             this.btnAddParticle.Name = "btnAddParticle";
             this.btnAddParticle.Size = new System.Drawing.Size(100, 33);
             this.btnAddParticle.TabIndex = 13;
-            this.btnAddParticle.Text = "New Particles!";
+            this.btnAddParticle.Text = "New Particle!";
             this.btnAddParticle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnAddParticle.UseVisualStyleBackColor = true;
             this.btnAddParticle.Visible = false;
             this.btnAddParticle.MouseClick += new System.Windows.Forms.MouseEventHandler(this.AddNewParticles);
+            // 
+            // popUpMenuOptions
+            // 
+            this.popUpMenuOptions.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.popUpMenuOptions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.applyToolStripMenuItem,
+            this.revokeToolStripMenuItem});
+            this.popUpMenuOptions.Name = "popUpMenuOptions";
+            this.popUpMenuOptions.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.popUpMenuOptions.Size = new System.Drawing.Size(176, 80);
+            // 
+            // applyToolStripMenuItem
+            // 
+            this.applyToolStripMenuItem.Name = "applyToolStripMenuItem";
+            this.applyToolStripMenuItem.Size = new System.Drawing.Size(175, 24);
+            this.applyToolStripMenuItem.Text = "Apply";
+            this.applyToolStripMenuItem.Click += new System.EventHandler(this.applyParticle);
+            // 
+            // revokeToolStripMenuItem
+            // 
+            this.revokeToolStripMenuItem.Name = "revokeToolStripMenuItem";
+            this.revokeToolStripMenuItem.Size = new System.Drawing.Size(175, 24);
+            this.revokeToolStripMenuItem.Text = "Revoke";
+            this.revokeToolStripMenuItem.Click += new System.EventHandler(this.revokeParticle);
             // 
             // AirMonit_Alarm
             // 
@@ -372,6 +402,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.txtNumBetween2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumToCompare)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.FileStatusIcon)).EndInit();
+            this.popUpMenuOptions.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -401,6 +432,9 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.PictureBox FileStatusIcon;
         private System.Windows.Forms.Button btnAddParticle;
+        private System.Windows.Forms.ContextMenuStrip popUpMenuOptions;
+        private System.Windows.Forms.ToolStripMenuItem applyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem revokeToolStripMenuItem;
     }
 }
 

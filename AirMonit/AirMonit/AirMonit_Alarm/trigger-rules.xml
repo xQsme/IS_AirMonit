@@ -45,12 +45,4 @@
       <msg>DSAFADSFASSADFAS</msg>
     </greater>
   </NO2>
-  <NOP applyRule="false" />
-  <Oic applyRule="false" />
-  <POOP applyRule="false">
-    <greater applyRule="true">
-      <num>0</num>
-      <msg>POPPINESSS FOR THE WIN!!!</msg>
-    </greater>
-  </POOP>
 </rules>

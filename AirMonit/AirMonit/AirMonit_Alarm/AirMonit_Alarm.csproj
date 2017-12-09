@@ -72,6 +72,7 @@
     </Compile>
     <Compile Include="model\FormException.cs" />
     <Compile Include="model\MessagingManager.cs" />
+    <Compile Include="model\ParticleTag.cs" />
     <Compile Include="model\RuleCondition.cs" />
     <Compile Include="model\XMLController.cs" />
     <Compile Include="Program.cs" />

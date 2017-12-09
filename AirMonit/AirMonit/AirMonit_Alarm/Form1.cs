@@ -274,11 +274,15 @@ namespace AirMonit_Alarm
             listAirParticles.Items.Clear();
 
             //abrir xml e ler todos os nos filhos do elemento root "rules"
-            List<string> particles = xmlController.GetParticlesName();
+            List<ParticleTag> particles = xmlController.GetParticlesName();
             Font fontApplyRule = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Bold);
-            foreach (string particle in particles)
+            foreach (ParticleTag particle in particles)
             {
-                var listViewItem = new ListViewItem(particle);
+                var listViewItem = new ListViewItem(particle.Name);
+                if (!particle.ApplyRule)
+                {
+                    listViewItem.Font = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Strikeout);
+                }
                 listAirParticles.Items.Add(listViewItem);
             }
             listAirParticles.View = View.List;
@@ -498,15 +502,51 @@ namespace AirMonit_Alarm
             if (particlesRulesDictionary != null)
             {
                 particlesRulesDictionary.Clear();
-                List<string> particles = xmlController.GetParticlesName();
-                foreach (string particle in particles)
+                List<ParticleTag> particles = xmlController.GetParticlesName();
+                foreach (ParticleTag particle in particles)
                 {
-                    List<RuleCondition> particleRules = xmlController.GetParticleRulesConditions(particle);
+                    if (particle.ApplyRule)
+                    {
+                        List<RuleCondition> particleRules = xmlController.GetParticleRulesConditions(particle.Name);
 
-                    particlesRulesDictionary.Add(particle, particleRules);
+                        particlesRulesDictionary.Add(particle.Name, particleRules);
+                    }
+                    
                 }
             }
         }
+
+        private void showOptionsMenu(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Right && SelectedParticle != null)
+            {
+                popUpMenuOptions.Show(Cursor.Position);
+            }
+        }
+
+        private void applyParticle(object sender, EventArgs e)
+        {
+            UpdateParticleStatus(SelectedParticle, true);
+        }
+
+        private void revokeParticle(object sender, EventArgs e)
+        {
+            UpdateParticleStatus(SelectedParticle, false);
+        }
+
+        private void UpdateParticleStatus(string particle, bool status)
+        {
+            xmlController.DisableReading();
+
+            xmlController.UpdateParticleStatus(particle, status);
+
+            xmlController.EnableReading();
+
+            LoadXmlRulesDictionary();
+
+            PopulateParticlesList();
+        }
+
 
         /// <summary>
         /// Is triggered when a new particle is added and it's thrown into mqtt dataUploader Topic

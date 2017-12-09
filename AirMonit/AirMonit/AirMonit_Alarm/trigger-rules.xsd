@@ -12,9 +12,6 @@
       <xs:element maxOccurs="1" name="CO" type="particleRuleType" />
       <xs:element maxOccurs="1" name="O3" type="particleRuleType" />
       <xs:element maxOccurs="1" name="NO2" type="particleRuleType" />
-<xs:element maxOccurs="1" name="NOP" type="particleRuleType" />
-<xs:element maxOccurs="1" name="Oic" type="particleRuleType" />
-<xs:element maxOccurs="1" name="POOP" type="particleRuleType" />
       <!--@NextElement-->
 
     </xs:sequence>

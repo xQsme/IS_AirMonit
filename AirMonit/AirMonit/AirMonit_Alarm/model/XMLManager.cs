@@ -152,6 +152,14 @@ namespace AirMonit_Alarm
             GetParticle(particle).AppendChild(rule);
         }
 
+        internal void UpdateParticleStatus(string particle, bool status)
+        {
+            
+            XmlNode particleNode = doc.SelectSingleNode(String.Format(XPATH_PARTICLE, particle));
+            particleNode.Attributes["applyRule"].InnerText = status.ToString().ToLower();
+
+        }
+
         /// <summary>
         /// Adicionar novas particulas
         /// </summary>
@@ -194,7 +202,7 @@ namespace AirMonit_Alarm
         }
 
         //Places a new Rule at the end of all rules from that particle
-        public void AddRule(string particle, XmlNode ruleNode)
+        internal void AddRule(string particle, XmlNode ruleNode)
         {
             XmlNode parent = GetParticle(particle);
 
@@ -206,7 +214,7 @@ namespace AirMonit_Alarm
         /// <summary>
         /// Saves the changes to the XML Document
         /// </summary>
-        public void Save()
+        internal void Save()
         {
             doc.Save(FILEPATHXML);
         }
@@ -293,9 +301,17 @@ namespace AirMonit_Alarm
             }
             catch (Exception ex)
             {
-                XmlSchemaValidationException shemaEx = (XmlSchemaValidationException)ex;
+                try
+                {
+                    XmlSchemaValidationException shemaEx = (XmlSchemaValidationException)ex;
+                }
+                catch (Exception)
+                {
+                    ValidationMessage = "Could not found trigger-rules-xsd";
+                }
+                
                 isValid = false;
-                ValidationMessage = "[Documento inválido]: " + ex.Message;
+                ValidationMessage += "[Documento inválido]: " + ex.Message;
             }
             return isValid;
         }
