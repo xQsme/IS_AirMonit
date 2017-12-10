@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -51,10 +51,10 @@
             // 
             // chart1
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            chartArea5.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.chart1.Legends.Add(legend5);
             this.chart1.Location = new System.Drawing.Point(295, 81);
             this.chart1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.chart1.Name = "chart1";
@@ -202,20 +202,22 @@
             // 
             // listViewEventos
             // 
-            this.listViewEventos.Location = new System.Drawing.Point(295, 505);
-            this.listViewEventos.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.listViewEventos.FullRowSelect = true;
+            this.listViewEventos.GridLines = true;
+            this.listViewEventos.Location = new System.Drawing.Point(295, 506);
             this.listViewEventos.Name = "listViewEventos";
-            this.listViewEventos.Size = new System.Drawing.Size(431, 267);
-            this.listViewEventos.TabIndex = 14;
+            this.listViewEventos.Size = new System.Drawing.Size(431, 265);
+            this.listViewEventos.TabIndex = 17;
             this.listViewEventos.UseCompatibleStateImageBehavior = false;
+            this.listViewEventos.View = System.Windows.Forms.View.Details;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1211, 783);
-            this.Controls.Add(this.label8);
             this.Controls.Add(this.listViewEventos);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.dateTimePicker1);
