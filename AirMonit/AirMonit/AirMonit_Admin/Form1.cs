@@ -24,6 +24,7 @@ namespace AirMonit_Admin
         private static string CITIES_ENDPOINT = "/api/cities";
         private static string PARTICLES_ENDPOINT = "/api/particles/{0}/summarize/city/{1}/day/{2}/hour";
         private static string INCIDENTS_ENDPOINT = "/api/cities/{0}/incidents";
+        private static string ALL_INCIDENTS_ENDPOINT = "/api/cities/incidents";
 
         public Form1()
         {
@@ -50,8 +51,9 @@ namespace AirMonit_Admin
             listViewAlarme.Columns.Add("Valor");
             listViewAlarme.Columns.Add("Mensagem");
 
-            listViewEventos.Columns.Add("Evento");
-            listViewEventos.Columns.Add("Data");
+            listViewEventos.Columns.Add("Evento", -2, HorizontalAlignment.Left);
+            listViewEventos.Columns.Add("Publisher", -2, HorizontalAlignment.Left);
+            listViewEventos.Columns.Add("Data", -2, HorizontalAlignment.Left);
         }
 
         public void populateParticleComboBox()
@@ -163,7 +165,7 @@ namespace AirMonit_Admin
                 };
                 Series serieMinimo = new System.Windows.Forms.DataVisualization.Charting.Series
                 {
-                    Name = "Minimo" + selectedCity,
+                    Name = "Minimo " + selectedCity,
                     Color = System.Drawing.Color.Green,
                     IsVisibleInLegend = true,
                     IsXValueIndexed = true,
@@ -196,7 +198,9 @@ namespace AirMonit_Admin
             string selectedCity = comboBox1.Text.Trim();
             if (!selectedCity.Equals(""))
             {
-                string incidents_uri = BASE_URL + string.Format(INCIDENTS_ENDPOINT, selectedCity);
+                //string incidents_uri = BASE_URL + string.Format(INCIDENTS_ENDPOINT, selectedCity);
+
+                string incidents_uri = BASE_URL + ALL_INCIDENTS_ENDPOINT;
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(incidents_uri);
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -216,12 +220,18 @@ namespace AirMonit_Admin
                 JavaScriptSerializer jsonObject = new JavaScriptSerializer();
                 lista = jsonObject.Deserialize<List<IncidentEntry>>(content);
 
+                listViewEventos.Items.Clear();
+
                 foreach (IncidentEntry entry in lista)
                 {
-                    ListViewItem lvi = new ListViewItem();
-                    lvi.SubItems.Add(entry.Event);
-                    lvi.SubItems.Add(entry.Date.ToShortDateString());
-                    listViewEventos.Items.Add(lvi);
+                    string[] arr = new string[4];
+                    ListViewItem itm;
+                    //add items to ListView 
+                    arr[0] = entry.Event;
+                    arr[1] = entry.Publisher;
+                    arr[2] = entry.Date.ToShortDateString();
+                    itm = new ListViewItem(arr);
+                    listViewEventos.Items.Add(itm);
                 }
             }
         }
