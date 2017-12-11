@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -505,12 +506,10 @@ namespace AirMonit_Alarm
                 List<ParticleTag> particles = xmlController.GetParticlesName();
                 foreach (ParticleTag particle in particles)
                 {
-                    if (particle.ApplyRule)
-                    {
-                        List<RuleCondition> particleRules = xmlController.GetParticleRulesConditions(particle.Name);
+                    
+                    List<RuleCondition> particleRules = xmlController.GetParticleRulesConditions(particle.Name);
 
-                        particlesRulesDictionary.Add(particle.Name, particleRules);
-                    }
+                    particlesRulesDictionary.Add(particle.Name, particleRules);
                     
                 }
             }
@@ -545,6 +544,35 @@ namespace AirMonit_Alarm
             LoadXmlRulesDictionary();
 
             PopulateParticlesList();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fileExplorer = new OpenFileDialog();
+
+            fileExplorer.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            fileExplorer.Filter = "xml files (.xml)|*.xml";
+
+            if (fileExplorer.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                FILEPATHXML = fileExplorer.FileName;
+                txtFilePath.Text = FILEPATHXML;
+            }
+            
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fileExplorer = new OpenFileDialog();
+
+            fileExplorer.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            fileExplorer.Filter = "xsd files (.xsd)|*.xsd";
+
+            if (fileExplorer.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                FILEPATHXSD = fileExplorer.FileName;
+                txtFilePath.Text = FILEPATHXSD;
+            }
         }
 
 

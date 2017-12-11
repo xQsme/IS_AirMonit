@@ -135,6 +135,7 @@ namespace AirMonit_Alarm
             else
             {
                 //Mostrar ao utilizador que existe uma nova particula...
+                //VERIFICAR SE a particula existe no xml porq no Dictionary so estao as applyRule..
                 OnNewParticleReceived(this, new MyEventParticle(entry.Name));
                 rulesDictionary.Add(entry.Name, null); //Null porq é particula nova logo nao tem regras nenhumas
             }

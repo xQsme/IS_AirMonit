@@ -58,6 +58,8 @@
             this.popUpMenuOptions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.applyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.revokeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.panelRulesInfo.SuspendLayout();
             this.panelCRUD_Rules.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumBetween2)).BeginInit();
@@ -296,7 +298,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilePath.Location = new System.Drawing.Point(559, 8);
             this.txtFilePath.Name = "txtFilePath";
-            this.txtFilePath.Size = new System.Drawing.Size(212, 22);
+            this.txtFilePath.Size = new System.Drawing.Size(188, 22);
             this.txtFilePath.TabIndex = 8;
             // 
             // btnNewRule
@@ -317,7 +319,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtXsdPath.Location = new System.Drawing.Point(559, 37);
             this.txtXsdPath.Name = "txtXsdPath";
-            this.txtXsdPath.Size = new System.Drawing.Size(212, 22);
+            this.txtXsdPath.Size = new System.Drawing.Size(188, 22);
             this.txtXsdPath.TabIndex = 11;
             // 
             // label6
@@ -360,21 +362,41 @@
             this.revokeToolStripMenuItem});
             this.popUpMenuOptions.Name = "popUpMenuOptions";
             this.popUpMenuOptions.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.popUpMenuOptions.Size = new System.Drawing.Size(176, 80);
+            this.popUpMenuOptions.Size = new System.Drawing.Size(127, 52);
             // 
             // applyToolStripMenuItem
             // 
             this.applyToolStripMenuItem.Name = "applyToolStripMenuItem";
-            this.applyToolStripMenuItem.Size = new System.Drawing.Size(175, 24);
+            this.applyToolStripMenuItem.Size = new System.Drawing.Size(126, 24);
             this.applyToolStripMenuItem.Text = "Apply";
             this.applyToolStripMenuItem.Click += new System.EventHandler(this.applyParticle);
             // 
             // revokeToolStripMenuItem
             // 
             this.revokeToolStripMenuItem.Name = "revokeToolStripMenuItem";
-            this.revokeToolStripMenuItem.Size = new System.Drawing.Size(175, 24);
+            this.revokeToolStripMenuItem.Size = new System.Drawing.Size(126, 24);
             this.revokeToolStripMenuItem.Text = "Revoke";
             this.revokeToolStripMenuItem.Click += new System.EventHandler(this.revokeParticle);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(745, 7);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(29, 23);
+            this.button1.TabIndex = 14;
+            this.button1.Text = "...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(745, 37);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(29, 23);
+            this.button2.TabIndex = 15;
+            this.button2.Text = "...";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // AirMonit_Alarm
             // 
@@ -382,6 +404,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.ClientSize = new System.Drawing.Size(786, 611);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnAddParticle);
             this.Controls.Add(this.FileStatusIcon);
             this.Controls.Add(this.txtXsdPath);
@@ -435,6 +459,8 @@
         private System.Windows.Forms.ContextMenuStrip popUpMenuOptions;
         private System.Windows.Forms.ToolStripMenuItem applyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem revokeToolStripMenuItem;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }
 
