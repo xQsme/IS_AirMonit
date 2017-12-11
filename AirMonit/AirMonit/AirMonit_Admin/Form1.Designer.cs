@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -51,17 +51,16 @@
             // 
             // chart1
             // 
-            chartArea5.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            this.chart1.Legends.Add(legend5);
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart1.Legends.Add(legend2);
             this.chart1.Location = new System.Drawing.Point(295, 81);
             this.chart1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.chart1.Name = "chart1";
-            this.chart1.Size = new System.Drawing.Size(865, 357);
+            this.chart1.Size = new System.Drawing.Size(904, 357);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
-            this.chart1.Click += new System.EventHandler(this.chart1_Click);
             // 
             // label1
             // 
@@ -98,9 +97,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(13, 511);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(98, 17);
+            this.label3.Size = new System.Drawing.Size(156, 17);
             this.label3.TabIndex = 4;
-            this.label3.Text = "Data de Início:";
+            this.label3.Text = "Data de Início (Alarme):";
             // 
             // dateTimePickerInicio
             // 
@@ -128,13 +127,13 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(13, 597);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(88, 17);
+            this.label4.Size = new System.Drawing.Size(146, 17);
             this.label4.TabIndex = 6;
-            this.label4.Text = "Data de Fim:";
+            this.label4.Text = "Data de Fim (Alarme):";
             // 
             // listViewAlarme
             // 
-            this.listViewAlarme.Location = new System.Drawing.Point(768, 505);
+            this.listViewAlarme.Location = new System.Drawing.Point(295, 504);
             this.listViewAlarme.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listViewAlarme.Name = "listViewAlarme";
             this.listViewAlarme.Size = new System.Drawing.Size(431, 267);
@@ -145,7 +144,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label5.Location = new System.Drawing.Point(764, 474);
+            this.label5.Location = new System.Drawing.Point(291, 473);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(76, 20);
             this.label5.TabIndex = 9;
@@ -194,7 +193,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label8.Location = new System.Drawing.Point(291, 474);
+            this.label8.Location = new System.Drawing.Point(764, 474);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(74, 20);
             this.label8.TabIndex = 15;
@@ -204,7 +203,7 @@
             // 
             this.listViewEventos.FullRowSelect = true;
             this.listViewEventos.GridLines = true;
-            this.listViewEventos.Location = new System.Drawing.Point(295, 506);
+            this.listViewEventos.Location = new System.Drawing.Point(768, 506);
             this.listViewEventos.Name = "listViewEventos";
             this.listViewEventos.Size = new System.Drawing.Size(431, 265);
             this.listViewEventos.TabIndex = 17;
@@ -235,7 +234,6 @@
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Form1";
             this.Text = "AirMonit Admin";
-            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
