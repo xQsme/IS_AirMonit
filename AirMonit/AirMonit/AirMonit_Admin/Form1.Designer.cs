@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -51,10 +51,10 @@
             // 
             // chart1
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
+            chartArea4.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea4);
+            legend4.Name = "Legend1";
+            this.chart1.Legends.Add(legend4);
             this.chart1.Location = new System.Drawing.Point(295, 81);
             this.chart1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.chart1.Name = "chart1";
@@ -133,12 +133,15 @@
             // 
             // listViewAlarme
             // 
+            this.listViewAlarme.FullRowSelect = true;
+            this.listViewAlarme.GridLines = true;
             this.listViewAlarme.Location = new System.Drawing.Point(295, 504);
             this.listViewAlarme.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listViewAlarme.Name = "listViewAlarme";
             this.listViewAlarme.Size = new System.Drawing.Size(431, 267);
             this.listViewAlarme.TabIndex = 8;
             this.listViewAlarme.UseCompatibleStateImageBehavior = false;
+            this.listViewAlarme.View = System.Windows.Forms.View.Details;
             // 
             // label5
             // 
