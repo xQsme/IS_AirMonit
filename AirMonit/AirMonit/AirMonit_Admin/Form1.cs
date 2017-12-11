@@ -20,10 +20,11 @@ namespace AirMonit_Admin
     public partial class Form1 : Form
     {
 
-        private static string BASE_URL = "http://localhost:50077";
+        private static string BASE_URI = Properties.Settings.Default.BaseURI;
         private static string CITIES_ENDPOINT = "/api/cities";
         private static string PARTICLES_ENDPOINT = "/api/particles/{0}/summarize/city/{1}/day/{2}/hour";
         private static string ALL_INCIDENTS_ENDPOINT = "/api/cities/incidents";
+        private static string ALARMS_ENDPOINT = "/api/particles/alarms/days/{0}_{1}";
 
         private List<string> cityList = new List<string>();
         private List<Color> colorList = new List<Color>();
@@ -34,11 +35,12 @@ namespace AirMonit_Admin
             dateTimePickerInicio.Value = DateTime.Today.AddDays(-7);
             dateTimePickerFim.Value = DateTime.Today;
 
-            listViewAlarme.Columns.Add("Data");
-            listViewAlarme.Columns.Add("Cidade");
-            listViewAlarme.Columns.Add("Partícula");
-            listViewAlarme.Columns.Add("Valor");
-            listViewAlarme.Columns.Add("Mensagem");
+            listViewAlarme.Columns.Add("Data", -2, HorizontalAlignment.Left);
+            listViewAlarme.Columns.Add("Partícula", -2, HorizontalAlignment.Left);
+            listViewAlarme.Columns.Add("Valor", -2, HorizontalAlignment.Left);
+            listViewAlarme.Columns.Add("Condição", -2, HorizontalAlignment.Left);
+            listViewAlarme.Columns.Add("Valor da Condição 1", -2, HorizontalAlignment.Left);
+            listViewAlarme.Columns.Add("Valor da Condição 2", -2, HorizontalAlignment.Left);
 
             listViewEventos.Columns.Add("Evento", -2, HorizontalAlignment.Left);
             listViewEventos.Columns.Add("Publisher", -2, HorizontalAlignment.Left);
@@ -54,18 +56,20 @@ namespace AirMonit_Admin
             dateTimePickerInicio.MaxDate = dateTimePickerFim.Value;
             dateTimePickerFim.MinDate = dateTimePickerInicio.Value;
 
-            populateParticleComboBox();
-            getCities();
+            PopulateParticleComboBox();
+            GetCities();
 
             comboBox1.SelectedIndex = 0;
             comboBox2.SelectedIndex = 0;
 
-            getParticles();
+            GetParticles();
 
             GetIncidents();
+
+            GetAlarms();
         }
 
-        public void populateParticleComboBox()
+        public void PopulateParticleComboBox()
         {
             ComboboxItem item = new ComboboxItem();
             item.Text = "CO";
@@ -80,9 +84,9 @@ namespace AirMonit_Admin
             comboBox2.Items.Add(item);
         }
 
-        public void getCities()
+        public void GetCities()
         {
-            string cities_uri = BASE_URL + CITIES_ENDPOINT;
+            string cities_uri = BASE_URI + CITIES_ENDPOINT;
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(cities_uri);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -127,7 +131,7 @@ namespace AirMonit_Admin
 
         }
 
-        public void getParticles()
+        public void GetParticles()
         {
 
             string selectedDate = dateTimePicker1.Value.ToString("dd-MM-yyyy");
@@ -157,7 +161,7 @@ namespace AirMonit_Admin
             int i = 0;
             foreach (string city in cityList)
             {
-                string particlesUri = BASE_URL + string.Format(PARTICLES_ENDPOINT, selectedParticle, city, selectedDate);
+                string particlesUri = BASE_URI + string.Format(PARTICLES_ENDPOINT, selectedParticle, city, selectedDate);
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(particlesUri);
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -200,7 +204,7 @@ namespace AirMonit_Admin
 
         public void DesenharSingleCity(string selectedDate,string selectedCity,string selectedParticle)
         {
-            string particlesUri = BASE_URL + string.Format(PARTICLES_ENDPOINT, selectedParticle, selectedCity, selectedDate);
+            string particlesUri = BASE_URI + string.Format(PARTICLES_ENDPOINT, selectedParticle, selectedCity, selectedDate);
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(particlesUri);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -267,9 +271,9 @@ namespace AirMonit_Admin
 
         public void GetIncidents()
         {
-                //string incidents_uri = BASE_URL + string.Format(INCIDENTS_ENDPOINT, selectedCity);
+                //string incidents_uri = BASE_URI + string.Format(INCIDENTS_ENDPOINT, selectedCity);
 
-            string incidentsUri = BASE_URL + ALL_INCIDENTS_ENDPOINT;
+            string incidentsUri = BASE_URI + ALL_INCIDENTS_ENDPOINT;
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(incidentsUri);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -305,14 +309,77 @@ namespace AirMonit_Admin
 
         }
 
+        public void GetAlarms()
+        {
+            string startDate = dateTimePickerInicio.Value.ToString("dd-MM-yyyy");
+            string endDate = dateTimePickerFim.Value.ToString("dd-MM-yyyy");
+            if (!startDate.Equals("") && !endDate.Equals(""))
+            {
+                string alarmsUri = BASE_URI + string.Format(ALARMS_ENDPOINT, startDate, endDate);
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(alarmsUri);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                //Stream e o StreamReader
+                string content = String.Empty;
+                using (Stream stream = response.GetResponseStream())
+                {
+                    using (StreamReader sr = new StreamReader(stream))
+                    {
+                        content = sr.ReadToEnd();
+                    }
+                }
+
+                List<AlarmEntry> lista = new List<AlarmEntry>();
+
+                JavaScriptSerializer jsonObject = new JavaScriptSerializer();
+                lista = jsonObject.Deserialize<List<AlarmEntry>>(content);
+
+                listViewAlarme.Items.Clear();
+
+                foreach (AlarmEntry entry in lista)
+                {
+                    string[] arr = new string[7];
+                    ListViewItem itm;
+                    //add items to ListView 
+                    arr[0] = entry.Date.ToShortDateString();
+
+                    if (entry.Particle != null)
+                    {
+                        arr[1] = entry.Particle.Trim();
+                    }
+
+                    arr[2] = entry.EntryValue.ToString();
+                    arr[3] = entry.Condition;
+
+                    if (entry.ConditionValues != null)
+                    {
+                        if (entry.ConditionValues[0] != null)
+                        {
+                            arr[4] = entry.ConditionValues[0].ToString();
+                        }
+                        if (entry.ConditionValues[1] != null)
+                        {
+                            arr[5] = entry.ConditionValues[1].ToString();
+                        }
+                    }
+
+                    itm = new ListViewItem(arr);
+                    listViewAlarme.Items.Add(itm);
+                }
+            }
+        }
+
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
             dateTimePickerFim.MinDate = dateTimePickerInicio.Value;
+            GetAlarms();
         }
 
         private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
         {
             dateTimePickerInicio.MaxDate = dateTimePickerFim.Value;
+            GetAlarms();
         }
 
         private void chart1_Click(object sender, EventArgs e)
@@ -327,17 +394,17 @@ namespace AirMonit_Admin
 
         private void dateTimePicker1_ValueChanged_1(object sender, EventArgs e)
         {
-            getParticles();
+            GetParticles();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            getParticles();
+            GetParticles();
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            getParticles();
+            GetParticles();
         }
     }
     public class ComboboxItem

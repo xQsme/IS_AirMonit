@@ -7,24 +7,110 @@
 <table>
     <tbody>
         <tr>
+            <td>&nbsp;</td>
+            <td style="font-size: 25px;">Particles&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
             <td>HTTPVerb&nbsp;</td>
-            <td>URI&nbsp;</td>
+            <td>URI With Example Linked&nbsp;</td>
             <td>INFO&nbsp;</td>
         </tr>
         <tr>
             <td>GET&nbsp;</td>
-            <td><a href="localhost/api/entries">localhost:80/api/entries</a></td>
-            <td>Get Table Data&nbsp;</td>
+            <td><a href="localhost:80/api/particles">localhost/api/particles</a></td>
+            <td>Get All Particles&nbsp;</td>
         </tr>
         <tr>
             <td>GET&nbsp;</td>
-            <td><a href="localhost:80/api/entries/1">localhost:80/api/entries/{id}</a></td>
-            <td>Get Entry by id&nbsp;</td>
+            <td><a href="localhost:80/api/particles/co/day/30-11-2017">localhost:80/api/particles/{particle}/day/{day}</a></td>
+            <td>Get Particles on a certain day format "DD-MM-YYYY"&nbsp;</td>
+        </tr>
+        <tr>
+            <td>GET&nbsp;</td>
+            <td><a href="localhost:80/api/particles/NO2/days/27-11-2017_30-11-2017">localhost:80/api/particles/{particle}/days/{days}</a></td>
+            <td>Get Particles between 2 days provided&nbsp;</td>
+        </tr>
+        <tr>
+            <td>GET&nbsp;</td>
+            <td><a href="localhost:80/api/particles/co/city/Leiria/day/30-11-2017">localhost:80/api/particles/{particle}/city/{city}/day/{day}</a>&nbsp;</td>
+            <td>Get Particles in city, on day provided&nbsp;</td>
+        </tr>
+        <tr>
+            <td>GET&nbsp;</td>
+            <td><a href="localhost:80/api/particles/co/summarize/day/30-11-2017/hour">localhost:80/api/particles/{particle}/summarize/day/{day}/hour</a>&nbsp;</td>
+            <td>Get Summary of certain Particle provided, on the day given &nbsp;</td>
+        </tr>
+        <tr>
+            <td>GET&nbsp;</td>
+            <td><a href="localhost:80/api/particles/co/summarize/city/Leiria/day/30-11-2017/hour">localhost:80/api/particles/{particle}/summarize/city/{city}/day/{day}/hour</a>&nbsp;</td>
+            <td>Get Summary of certain Particle provided, on the day and city given&nbsp;</td>
+        </tr>
+        <tr>
+            <td>GET&nbsp;</td>
+            <td><a href="localhost:80/api/particles/co/summarize/days/27-11-2017_30-11-2017/">localhost:80/api/particles/{particle}/summarize/days/{days}/"</a>&nbsp;</td>
+            <td>Get Summary of a Particle between 2 days provided&nbsp;</td>
+        </tr>
+        <tr>
+            <td>GET&nbsp;</td>
+            <td><a href="localhost:80/api/particles/co/summarize/city/Leiria/days/27-11-2017_30-11-2017">localhost:80/api/particles/{particle}/summarize/city/{city}/days/{days}</a>&nbsp;</td>
+            <td>Get Summary of a Particle between 2 days provided in city given&nbsp;</td>
+        </tr>
+        <tr class="blank_row">
+            <td bgcolor="#FFFFFF" ">&nbsp;</td>
+        </tr>
+        <tr class="blank_row">
+            <td bgcolor="#FFFFFF" ">&nbsp;</td>
         </tr>
         <tr>
             <td>&nbsp;</td>
+            <td style="font-size: 25px;">Cities&nbsp;</td>
             <td>&nbsp;</td>
-            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>HTTPVerb&nbsp;</td>
+            <td>URI With Example Linked&nbsp;</td>
+            <td>INFO&nbsp;</td>
+        </tr>
+        <tr>
+            <td>GET&nbsp;</td>
+            <td><a href="localhost:80/api/cities">localhost:80/api/cities</a>&nbsp;</td>
+            <td>Get All Cities&nbsp;</td>
+        </tr>
+        <tr>
+            <td>GET&nbsp;</td>
+            <td><a href="localhost:80/api/cities/Leiria/sensors">localhost:80/api/cities/{city}/sensors</a>&nbsp;</td>
+            <td>Get all Sensors from city provided&nbsp;</td>
+        </tr>
+        <tr>
+            <td>GET&nbsp;</td>
+            <td><a href="localhost:80/api/cities/Leiria/sensors/last">localhost:80/api/cities/{city}/sensors/last</a>&nbsp;</td>
+            <td>Get the Last Sensor Inserted &nbsp;</td>
+        </tr>
+        <tr>
+            <td>GET&nbsp;</td>
+            <td><a href="localhost:80/api/cities/incidents">localhost:80/api/cities/incidents</a>&nbsp;</td>
+            <td>Get all Incidents&nbsp;</td>
+        </tr>
+        <tr>
+            <td>GET&nbsp;</td>
+            <td><a href="localhost:80/api/cities/Leiria/incidents">localhost:80/api/cities/{city}/incidents</a>&nbsp;</td>
+            <td>Get all Incidents from a certain city&nbsp;</td>
+        </tr>
+        <tr>
+            <td>GET&nbsp;</td>
+            <td><a href="localhost:80/api/cities/events">localhost:80/api/cities/events</a>&nbsp;</td>
+            <td>Get all Events Possible&nbsp;</td>
+        </tr>
+        <tr>
+            <td>POST&nbsp;</td>
+            <td><a href="localhost:80/api/cities/Leiria/sensors">localhost:80/api/cities/{city}/sensors</a>&nbsp;</td>
+            <td>Insert a Sensor with Information from Request's Body&nbsp;</td>
+        </tr>
+        <tr>
+            <td>POST&nbsp;</td>
+            <td><a href="localhost:80/api/cities/Leiria/incidents">localhost:80/api/cities/{city}/incidents</a>&nbsp;</td>
+            <td>Insert a Incident with Information from Request's Body&nbsp;</td>
         </tr>
     </tbody>
 </table>
