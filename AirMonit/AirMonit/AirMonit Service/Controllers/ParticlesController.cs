@@ -26,7 +26,13 @@ namespace AirMonit_Service.Controllers
         /// <returns></returns>
         public IEnumerable<ParticleEntry> GetAllParticles()
         {
-            return DBManager.GetAllEntries();
+            return DBManager.GetAllParticles();
+        }
+
+        [Route("api/particles/{particle}")]
+        public IEnumerable<ParticleEntry> GetParticle(string particle)
+        {
+            return DBManager.GetParticle(particle);
         }
 
         //OK!
@@ -160,6 +166,26 @@ namespace AirMonit_Service.Controllers
             DateTime start = DateTime.Parse(dates[0]);
             DateTime end = DateTime.Parse(dates[1]);
             return DBManager.GetParticlesSummarizeInDaysInCity(particle, city, start, end);
+        }
+
+        #endregion
+
+        #region Alarms
+
+        [Route("api/particles/alarms/days/{days}")]
+        public IEnumerable<AlarmEntry> GetAlarmsBetweenDates(string days)
+        {
+            string[] dates = days.Split('_');
+            if (dates.Length <= 1)
+            {
+                return null;
+            }
+
+
+            DateTime start = DateTime.Parse(dates[0]);
+            DateTime end = DateTime.Parse(dates[1]);
+
+            return DBManager.GetAlarmsBetweenDates(start, end);
         }
 
         #endregion

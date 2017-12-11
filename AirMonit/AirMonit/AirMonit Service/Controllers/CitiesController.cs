@@ -40,7 +40,7 @@ namespace AirMonit_Service.Controllers
         [Route("api/cities/{city}/incidents")]
         public IEnumerable<IncidentEntry> GetCityIncidents(string city)
         {
-            return DBManager.GetLastIncidentsInCity(city);
+            return DBManager.GetTodaysIncidentsInCity(city);
         }
 
         [Route("api/cities/events")]

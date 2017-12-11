@@ -27,6 +27,7 @@ namespace AirMonit_Service.Models
         private static string CONNSTR = Resources.DBConnection;
 
         private const string INSERT_ALARM = "INSERT INTO ALARMS (particle, condition, conditionValue1, conditionValue2, EntryValue, Message, Date, CityId) VALUES (@particleName, @condition, @conditionValue1, @conditionValue2, @entryValue, @message,  @date, (" + SELECT_CITY_BY_NAME + "))";
+
         public static int WriteToTableAlarm(AlarmEntry alarmEntry)
         {
             SqlConnection conn = new SqlConnection(CONNSTR);
@@ -163,8 +164,59 @@ namespace AirMonit_Service.Models
 
         }
 
+        private static string SELECT_ALARMS_BETWEEN_DATES = "SELECT Particle, Condition, ConditionValue1, ConditionValue2, EntryValue, Date, Message, " + SELECT_CITY_NAME_BY_ID+ " as city FROM ALARMS WHERE "+ SQL_ROW_DATE_105 + " >= convert(VARCHAR, @start, 105) AND "+ SQL_ROW_DATE_105 + " <= convert(VARCHAR, @end, 105)";
+        public static List<AlarmEntry> GetAlarmsBetweenDates(DateTime start, DateTime end)
+        {
+
+            SqlConnection conn = new SqlConnection(CONNSTR);
+            List<AlarmEntry> lista = new List<AlarmEntry>();
+            //try
+            //{
+                conn.Open();
+
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = SELECT_ALARMS_BETWEEN_DATES;
+                cmd.Connection = conn;
+                cmd.Parameters.AddWithValue("@start", start);
+                cmd.Parameters.AddWithValue("@end", end);
+                SqlDataReader reader = cmd.ExecuteReader();
+                
+                while (reader.Read())
+                {
+                    decimal val1 = (decimal)reader["ConditionValue1"];
+                    decimal val2 = (decimal)reader["ConditionValue2"];
+
+                    AlarmEntry e = new AlarmEntry();
+                    e.City = (string)reader["city"];
+                    e.Condition = (string)reader["Condition"];
+                    e.ConditionValues = new decimal[] { val1 , val2 };
+                    e.Date = (DateTime)reader["Date"];
+                    e.EntryValue = (decimal)reader["EntryValue"];
+                    e.Message = (string)reader["Message"]; ;
+                    e.Particle = (string)reader["Particle"];
+
+                    lista.Add(e);
+                }
+                reader.Close();
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e);
+            //    throw;
+            //}
+            //finally
+            //{
+            //    if (conn.State == System.Data.ConnectionState.Open)
+            //    {
+            //        conn.Close();
+            //    }
+            //}
+            return lista;
+
+        }
+
         private const string SELECT_ALL_PARTICLES = "SELECT DISTINCT RTRIM(name) as name FROM CityAverage;";
-        public static List<string> GetParticles()
+        public static List<string> GetParticlesName()
         {
             SqlConnection conn = new SqlConnection(CONNSTR);
             List<string> particlesList = new List<string>();
@@ -201,9 +253,50 @@ namespace AirMonit_Service.Models
             return particlesList;
         }
 
+        private const string SELECT_PARTICLE_VALUES = "SELECT name, value, date, "+SELECT_CITY_NAME_BY_ID+" as city FROM Entries;";
+        public static List<ParticleEntry> GetParticle(string particle)
+        {
+
+            SqlConnection conn = new SqlConnection(CONNSTR);
+            List<ParticleEntry> lista = new List<ParticleEntry>();
+            try
+            {
+                conn.Open();
+
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = SELECT_PARTICLE_VALUES;
+                cmd.Connection = conn;
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    ParticleEntry e = new ParticleEntry();
+                    e.City = (string)reader["city"];
+                    e.Name = (string)reader["name"];
+                    e.Value = (decimal)reader["value"];
+                    e.Date = (DateTime)reader["date"];
+
+                    lista.Add(e);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    conn.Close();
+                }
+            }
+            return lista;
+        }
+
         //Como saber se é admin ou se é user normal para poder usar o TOP?
         private const string SELECT_ALL_ENTRIES = "SELECT @TOP name, value, date, "+SELECT_CITY_NAME_BY_ID+"as city FROM Entries";
-        public static List<ParticleEntry> GetAllEntries()
+        public static List<ParticleEntry> GetAllParticles()
         {
             SqlConnection conn = new SqlConnection(CONNSTR);
             List<ParticleEntry> lista = new List<ParticleEntry>();
@@ -661,7 +754,7 @@ namespace AirMonit_Service.Models
 
 
         private const string SELECT_TODAY_CITY_INCIDENTS = "SELECT message, publisher, date, (SELECT name FROM Events e WHERE e.id = eventId) as evento, otherEvent FROM INCIDENTS WHERE cityId = " + SELECT_CITY_BY_NAME + " AND convert(VARCHAR, GETDATE(), 105) = "+ SQL_ROW_DATE_105 + " ORDER BY date DESC";
-        public static List<IncidentEntry> GetLastIncidentsInCity(string city)
+        public static List<IncidentEntry> GetTodaysIncidentsInCity(string city)
         {
 
             SqlConnection conn = new SqlConnection(CONNSTR);
