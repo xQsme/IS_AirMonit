@@ -7,8 +7,15 @@ using System.Xml;
 
 namespace AirMonit_Alarm.model
 {
+        #region Lançamento de Eventos
+
+        public delegate void MyEventXmlChange(object source);
+
+        #endregion
+
     public class XMLController
     {
+        public event MyEventXmlChange OnXmlChange;
 
         private XMLManager xmlManager;
         public string XmlValidationError { get; internal set; }
@@ -16,6 +23,26 @@ namespace AirMonit_Alarm.model
         public XMLController(string xmlFile, string xsdFile)
         {
             xmlManager = new XMLManager(xmlFile, xsdFile);
+        }
+
+        public bool ChangeXmlFile(string xmlFile)
+        {
+
+            xmlManager.XmlFilePath = xmlFile;
+            OnXmlChange(this);
+            if (!xmlManager.ValidateXml(xmlFile))
+            {
+                XmlValidationError = xmlManager.ValidationMessage;
+                return false;
+            }
+            return true;
+        }
+
+        public void ChangeXsdFile(string xsdFile)
+        {
+
+            xmlManager.XsdFilePath = xsdFile;
+
         }
 
         #region Getters
@@ -64,11 +91,14 @@ namespace AirMonit_Alarm.model
 
         public void AddParticleToXML(string particle)
         {
+            DisableReading();
+
             xmlManager.AddNewParticleToSchema(particle);
             xmlManager.AddNewParticleToXML(particle);
             xmlManager.Save();
 
-            //TODO: Parar o servico para poder fazer esta funcao...
+            EnableReading();
+
         }
        
         public void SaveRule(RuleCondition rule)
@@ -85,7 +115,8 @@ namespace AirMonit_Alarm.model
                 //O parent pode nao ser null mas o previous pode ser... ou seja o 1º elemento da lista
                 xmlManager.UpdateRule(xmlRule, rule.StoredNode);
             }
-            
+
+            OnXmlChange(this);
         }
 
         public void DeleteRule(RuleCondition rule)
@@ -93,7 +124,9 @@ namespace AirMonit_Alarm.model
             XmlNode nodeToRemove = rule.StoredNode;
 
             xmlManager.DeleteRule(nodeToRemove);
-            
+
+            OnXmlChange(this);
+
         }
 
         public void DisableReading()
@@ -104,6 +137,7 @@ namespace AirMonit_Alarm.model
         public void EnableReading()
         {
             xmlManager.ActivateRules();
+            OnXmlChange(this);
         }
 
         #endregion
@@ -180,6 +214,7 @@ namespace AirMonit_Alarm.model
         {
             xmlManager.UpdateParticleStatus(particle, status);
             xmlManager.Save();
+            OnXmlChange(this);
         }
     }
 }

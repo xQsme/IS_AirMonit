@@ -53,6 +53,8 @@ namespace AirMonit_Alarm
             {
                 topicsCollection.CopyTo(sTopics, 0);
                 xmlController = new XMLController(FILEPATHXML, FILEPATHXSD);
+                xmlController.OnXmlChange += new MyEventXmlChange(UpdateXmlRelatedData);
+
                 particlesRulesDictionary = new Dictionary<string, List<RuleCondition>>();
 
                 newParticlesList = new List<string>();
@@ -364,8 +366,7 @@ namespace AirMonit_Alarm
                 }
                 ClearCRUDFields(sender, e);
                 xmlController.SaveRule(rule);
-
-                LoadXmlRulesDictionary();
+                
                 PopulateRulesList(SelectedParticle);
             }
         }
@@ -480,19 +481,13 @@ namespace AirMonit_Alarm
         private void AddNewParticles(object sender, MouseEventArgs e)
         {
 
-            xmlController.DisableReading();
-
             foreach (string particle in newParticlesList)
             {
                 xmlController.AddParticleToXML(particle);
             }
-
-            xmlController.EnableReading();
-
-            LoadXmlRulesDictionary();
-
+            
             newParticlesList.Clear();
-            PopulateParticlesList();
+
             btnAddParticle.Visible = false;
         }
 
@@ -540,10 +535,6 @@ namespace AirMonit_Alarm
             xmlController.UpdateParticleStatus(particle, status);
 
             xmlController.EnableReading();
-
-            LoadXmlRulesDictionary();
-
-            PopulateParticlesList();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -555,8 +546,14 @@ namespace AirMonit_Alarm
 
             if (fileExplorer.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
+                if( !xmlController.ChangeXmlFile(fileExplorer.FileName) )
+                {
+                    MessageBox.Show(xmlController.XmlValidationError +"\nIf there's a more correct XSD to this new XML you can still add it");
+                }
                 FILEPATHXML = fileExplorer.FileName;
                 txtFilePath.Text = FILEPATHXML;
+                PopulateRulesList(SelectedParticle);
+                EnableCRUDPanel(false);
             }
             
         }
@@ -596,6 +593,12 @@ namespace AirMonit_Alarm
                 
             });
             
+        }
+
+        public void UpdateXmlRelatedData(object source)
+        {
+            LoadXmlRulesDictionary();
+            PopulateParticlesList();
         }
 
     }

@@ -38,14 +38,24 @@ namespace AirMonit_Alarm
 
         private string FILEPATHXSD;
         private string FILEPATHXML;
-        internal string filepath
+        internal string XmlFilePath
         {
             get { return FILEPATHXML; }
-            set {
+            set
+            {
                 FILEPATHXML = value;
                 doc = null;
                 doc = new XmlDocument();
                 doc.Load(FILEPATHXML);
+            }
+        }
+
+        internal string XsdFilePath
+        {
+            get { return FILEPATHXSD; }
+            set
+            {
+                FILEPATHXSD = value;
             }
         }
 
@@ -58,7 +68,7 @@ namespace AirMonit_Alarm
         internal XMLManager(string xmlFile, string xsdFile)
         {
             this.FILEPATHXSD = xsdFile;
-            this.filepath = xmlFile;
+            this.XmlFilePath = xmlFile;
 
         }
 
@@ -310,6 +320,37 @@ namespace AirMonit_Alarm
                     ValidationMessage = "Could not found trigger-rules-xsd";
                 }
                 
+                isValid = false;
+                ValidationMessage += "[Documento inválido]: " + ex.Message;
+            }
+            return isValid;
+        }
+
+        internal bool ValidateXml(string xmlPath)
+        {
+            isValid = true;
+            ValidationMessage = "[Documento válido]";
+            XmlDocument doc = new XmlDocument();
+            try
+            {
+                doc.Load(xmlPath);
+                doc.Schemas.Add(null, FILEPATHXSD);
+
+                ValidationEventHandler myEvent = new ValidationEventHandler(trataEvento);
+
+                doc.Validate(myEvent);
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    XmlSchemaValidationException shemaEx = (XmlSchemaValidationException)ex;
+                }
+                catch (Exception)
+                {
+                    ValidationMessage = "Could not found trigger-rules-xsd";
+                }
+
                 isValid = false;
                 ValidationMessage += "[Documento inválido]: " + ex.Message;
             }

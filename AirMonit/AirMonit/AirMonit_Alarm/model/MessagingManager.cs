@@ -50,12 +50,10 @@ namespace AirMonit_Alarm
 
         private void MClient_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
         {
-            Console.WriteLine("Still Receiving");
             if (e.Topic == sTopics[0])
             {
                 ParticleEntry entry;
                 String json = Encoding.UTF8.GetString(e.Message);
-                Console.WriteLine("Received from DU: " + json);
 
                 try
                 {
@@ -70,10 +68,6 @@ namespace AirMonit_Alarm
                 }
 
             }
-            else if (e.Topic == sTopics[1])
-            {
-                Console.WriteLine("Received from Alarm" + Encoding.UTF8.GetString(e.Message));
-            }
         }
 
         public void disconnectMqtt()
@@ -82,13 +76,13 @@ namespace AirMonit_Alarm
                 mClient.Disconnect();
         }
 
-        //TODO: Nao ler as regras das particulas que onde applyRule = false
+        //Nota: Ja previne caso se altera o Dictionary noutro sitio e aconteça apanhar a null aqui
         private void validateParticleWithAlarm(ParticleEntry entry)
         {
             if (rulesDictionary.ContainsKey(entry.Name))
             {
                 List<RuleCondition> rulesConditions = rulesDictionary[entry.Name];
-                if(rulesConditions == null)
+                if(rulesConditions == null )//|| rulesConditions.) //Verificar se a particula tb está a false...
                 {
                     //Novas particulas detetadas começam com a lista a null
                     return;
@@ -135,7 +129,6 @@ namespace AirMonit_Alarm
             else
             {
                 //Mostrar ao utilizador que existe uma nova particula...
-                //VERIFICAR SE a particula existe no xml porq no Dictionary so estao as applyRule..
                 OnNewParticleReceived(this, new MyEventParticle(entry.Name));
                 rulesDictionary.Add(entry.Name, null); //Null porq é particula nova logo nao tem regras nenhumas
             }
