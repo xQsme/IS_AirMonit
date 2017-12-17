@@ -1,4 +1,5 @@
-﻿using AirMonit_DLog.Models;
+﻿using AirMonit_Alarm.model;
+using AirMonit_DLog.Models;
 using IAirEntries;
 using System;
 using System.Collections.Generic;
@@ -32,19 +33,28 @@ namespace AirMonit_Alarm
         private string[] sTopics;
         private JavaScriptSerializer jss;
         private string Ip;
-        private Dictionary<string, List<RuleCondition>> rulesDictionary;
+        public Dictionary<string, List<RuleCondition>> rulesDictionary;
+        private byte[] qosLevels = { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE };
+
+        public List<ParticleTag> ListaParticulas { get; }
+
         private string jsonResponse;
 
-        public MessagingHandler(string[] sTopics, string ip, Dictionary<string, List<RuleCondition>> rule)
+        public MessagingHandler(string[] sTopics, string ip, Dictionary<string, List<RuleCondition>> rule, List<ParticleTag> listaParticulas)
         {
             this.Ip = ip;
             this.rulesDictionary = rule;
+            this.ListaParticulas = listaParticulas;
             this.sTopics = sTopics;
             jss = new JavaScriptSerializer();
+            ConnectMqtt();
+        }
+
+        private void ConnectMqtt()
+        {
             mClient = new MqttClient(Ip);
             mClient.Connect(Guid.NewGuid().ToString());
             mClient.MqttMsgPublishReceived += MClient_MqttMsgPublishReceived;
-            byte[] qosLevels = { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE };
             mClient.Subscribe(sTopics, qosLevels);
         }
 
@@ -76,17 +86,24 @@ namespace AirMonit_Alarm
                 mClient.Disconnect();
         }
 
+        public void reConnectMqtt()
+        {
+            if (!mClient.IsConnected)
+                ConnectMqtt();
+        }
+
         //Nota: Ja previne caso se altera o Dictionary noutro sitio e aconteça apanhar a null aqui
         private void validateParticleWithAlarm(ParticleEntry entry)
         {
             if (rulesDictionary.ContainsKey(entry.Name))
             {
                 List<RuleCondition> rulesConditions = rulesDictionary[entry.Name];
-                if(rulesConditions == null )//|| rulesConditions.) //Verificar se a particula tb está a false...
+                if (rulesConditions == null || !ListaParticulas.Exists(ele => ele.Name.Equals(entry.Name) && ele.ApplyRule))//|| rulesConditions.) //Verificar se a particula tb está a false...
                 {
                     //Novas particulas detetadas começam com a lista a null
                     return;
                 }
+
                 foreach (RuleCondition rule in rulesConditions)
                 {
                     if (!rule.ApplyRule)

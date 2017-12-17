@@ -63,9 +63,9 @@ namespace AirMonit_DLog.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Data Source=43a269cc-ada0-4e03-bdb2-a83100ad06e2.sqlserver.sequelizer.com;Persist Security Info=True;User ID=zwkazykoudbumpbt;Password=YAS8WYxf5pSS8nDgkLvRNSnJdrSJqockhZt5YwHeBtdNpNJJL6MZqsfgni4EgVWP.
         /// </summary>
-        internal static string connStr {
+        internal static string DBConnection {
             get {
-                return ResourceManager.GetString("connStr", resourceCulture);
+                return ResourceManager.GetString("DBConnection", resourceCulture);
             }
         }
     }

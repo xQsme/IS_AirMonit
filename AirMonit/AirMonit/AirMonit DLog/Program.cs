@@ -5,10 +5,10 @@ using System.Web.Script.Serialization;
 using AirMonit_DLog.Properties;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
-using IAirEntries;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using AirMonit_DLog.Models;
+using IAirEntries;
 
 namespace AirMonit_DLog
 {
@@ -43,7 +43,6 @@ namespace AirMonit_DLog
             if (ipDU.Equals(ipAlarm))
             {
                 mClientDU = new MqttClient(ipDU);
-                mClientAlarm = mClientDU;
 
                 mClientDU.Connect(Guid.NewGuid().ToString());
 

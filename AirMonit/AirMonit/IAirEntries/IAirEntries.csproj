@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="AlarmEntry.cs" />
     <Compile Include="City.cs" />
-    <Compile Include="DBManager.cs" />
     <Compile Include="IncidentEntry.cs" />
     <Compile Include="ParticleEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,6 +1,7 @@
 ﻿using AirMonit_DLog.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -19,6 +20,7 @@ namespace AirMonit_Alarm.model
 
         private XMLManager xmlManager;
         public string XmlValidationError { get; internal set; }
+        private IFormatProvider cultureInfo = CultureInfo.InvariantCulture;
 
         public XMLController(string xmlFile, string xsdFile)
         {
@@ -91,13 +93,11 @@ namespace AirMonit_Alarm.model
 
         public void AddParticleToXML(string particle)
         {
-            DisableReading();
 
             xmlManager.AddNewParticleToSchema(particle);
             xmlManager.AddNewParticleToXML(particle);
             xmlManager.Save();
-
-            EnableReading();
+            
 
         }
        
@@ -152,14 +152,14 @@ namespace AirMonit_Alarm.model
             {
                 ruleNode = xmlManager.GetRuleBetweenExample();
 
-                ruleNode["num1"].InnerText = rule.Value1.ToString();
-                ruleNode["num2"].InnerText = rule.Value2.ToString();
+                ruleNode["num1"].InnerText = rule.Value1.ToString("0.00", cultureInfo); ;
+                ruleNode["num2"].InnerText = rule.Value2.ToString("0.00", cultureInfo);
 
             }
             else
             {
                 ruleNode = xmlManager.GetRuleDefaultExample(rule.Condition.ToString().ToLower());
-                ruleNode["num"].InnerText = rule.Value1.ToString();
+                ruleNode["num"].InnerText = rule.Value1.ToString("0.00", cultureInfo);
 
             }
 
@@ -182,9 +182,9 @@ namespace AirMonit_Alarm.model
                 bool applyRule = Convert.ToBoolean(rule.Attributes["applyRule"].Value); //<equals applyRule="true">
                 string condition = rule.Name; //<equals>
                 if (condition.ToLower().Equals("between"))
-                    values = new decimal[] { decimal.Parse(rule["num1"].InnerText), decimal.Parse(rule["num2"].InnerText) };
+                    values = new decimal[] { decimal.Parse(rule["num1"].InnerText, CultureInfo.InvariantCulture), decimal.Parse(rule["num2"].InnerText, CultureInfo.InvariantCulture) };
                 else
-                    values = new decimal[] { decimal.Parse(rule["num"].InnerText) };
+                    values = new decimal[] { decimal.Parse(rule["num"].InnerText, CultureInfo.InvariantCulture) };
                 string message = rule["msg"].InnerText;
 
                 return new RuleCondition(rule, applyRule, condition, values, message);
@@ -212,9 +212,11 @@ namespace AirMonit_Alarm.model
 
         public void UpdateParticleStatus(string particle, bool status)
         {
+
             xmlManager.UpdateParticleStatus(particle, status);
             xmlManager.Save();
             OnXmlChange(this);
         }
+        
     }
 }

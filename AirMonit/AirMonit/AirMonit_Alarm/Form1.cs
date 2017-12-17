@@ -43,6 +43,7 @@ namespace AirMonit_Alarm
         string FILEPATHXML = AppDomain.CurrentDomain.BaseDirectory + @"trigger-rules.xml";
         string FILEPATHXSD = AppDomain.CurrentDomain.BaseDirectory + @"trigger-rules.xsd";
 
+        public List<ParticleTag> particlesList;
         public List<string> newParticlesList { get; set; }
 
         public AirMonit_Alarm()
@@ -56,6 +57,7 @@ namespace AirMonit_Alarm
                 xmlController.OnXmlChange += new MyEventXmlChange(UpdateXmlRelatedData);
 
                 particlesRulesDictionary = new Dictionary<string, List<RuleCondition>>();
+                particlesList = xmlController.GetParticlesName();
 
                 newParticlesList = new List<string>();
 
@@ -108,10 +110,16 @@ namespace AirMonit_Alarm
             {
                 if (xmlController.GetAlarmStatus())
                 {
-                    mqttHandler = new MessagingHandler(sTopics, ip, particlesRulesDictionary);
-                    mqttHandler.OnNewParticleReceived += new MyEventNewParticleReceived(NewParticleFound);
+                    if (mqttHandler != null)
+                    {
+                        mqttHandler.reConnectMqtt();
+                    }
+                    else
+                    {
+                        mqttHandler = new MessagingHandler(sTopics, ip, particlesRulesDictionary, particlesList);
+                        mqttHandler.OnNewParticleReceived += new MyEventNewParticleReceived(NewParticleFound);
+                    }
                 }
-
             }
             catch (Exception ex)
             {
@@ -277,9 +285,8 @@ namespace AirMonit_Alarm
             listAirParticles.Items.Clear();
 
             //abrir xml e ler todos os nos filhos do elemento root "rules"
-            List<ParticleTag> particles = xmlController.GetParticlesName();
             Font fontApplyRule = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Bold);
-            foreach (ParticleTag particle in particles)
+            foreach (ParticleTag particle in particlesList)
             {
                 var listViewItem = new ListViewItem(particle.Name);
                 if (!particle.ApplyRule)
@@ -329,56 +336,49 @@ namespace AirMonit_Alarm
 
         private void btnApply_Click(object sender, EventArgs e)
         {
-            if (xmlController.GetAlarmStatus())
+            RuleCondition rule;
+            if (OPERATION == CRUD.UPDATE)
             {
-                MessageBox.Show("Stop the Service in order to update or create Rules");
+                if(SelectedRule == null)
+                {
+                    MessageBox.Show("Please Select a rule to Update");
+                    return;
+                }
+                rule = SelectedRule;
+                UpdateRule(rule);
             }
             else
             {
-                RuleCondition rule;
-                if (OPERATION == CRUD.UPDATE)
+                try
                 {
-                    if(SelectedRule == null)
-                    {
-                        MessageBox.Show("Please Select a rule to Update");
-                        return;
-                    }
-                    rule = SelectedRule;
-                    updateRule(rule);
+                    rule = CreateRule();
                 }
-                else
+                catch(FormException ex)
                 {
-                    try
+                    string reportErrors = "";
+                    foreach (string error in ex.Errors)
                     {
-                        rule = CreateRule();
+                        reportErrors += Environment.NewLine +"->"+ error;
                     }
-                    catch(FormException ex)
-                    {
-                        string reportErrors = "";
-                        foreach (string error in ex.Errors)
-                        {
-                            reportErrors += Environment.NewLine +"->"+ error;
-                        }
-                        MessageBox.Show("Unable to Create Rule: "+ Environment.NewLine + reportErrors);
-                        return;
-                    }
+                    MessageBox.Show("Unable to Create Rule: "+ Environment.NewLine + reportErrors);
+                    return;
+                }
                     
-                }
-                ClearCRUDFields(sender, e);
-                xmlController.SaveRule(rule);
-                
-                PopulateRulesList(SelectedParticle);
             }
+            ClearCRUDFields(sender, e);
+            xmlController.SaveRule(rule);
+                
+            PopulateRulesList(SelectedParticle);
         }
 
-        private void updateRule(RuleCondition rule)
+        private void UpdateRule(RuleCondition rule)
         {
             rule.ApplyRule = true;
             rule.Condition = (Condition)Enum.Parse(typeof(Condition), cbConditions.Text);
             rule.Value1 = txtNumToCompare.Value;
             if (rule.Condition == Condition.BETWEEN)
             {
-                rule.Value1 = txtNumBetween2.Value;
+                rule.Value2 = txtNumBetween2.Value;
             }
             rule.Message = txtAlertMessage.Text;
         }
@@ -404,58 +404,42 @@ namespace AirMonit_Alarm
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            //To avoid the delete new rule to show the msg since it will only clear the fields
-            if (xmlController.GetAlarmStatus() && OPERATION == CRUD.UPDATE)
+            if(OPERATION == CRUD.UPDATE)
             {
-                MessageBox.Show("Stop the Service in order to alter or create Rules");
+                //xmlHandler.
+                DeleteRule(sender, e);
+                DisplayRules(sender, e);
             }
-            else
-            {
-                if(OPERATION == CRUD.UPDATE)
-                {
-                    //xmlHandler.
-                    DeleteRule(sender, e);
-                    DisplayRules(sender, e);
-                }
-                ClearCRUDFields(sender, e);
-                //Delete in the xml too
+            ClearCRUDFields(sender, e);
 
-            }
         }
 
         private void btnRevoke_Click(object sender, EventArgs e)
         {
-            if (xmlController.GetAlarmStatus())
+            if (SelectedRule == null)
             {
-                MessageBox.Show("Stop the Service in order to alter or create Rules");
+                MessageBox.Show("Please Select a rule to Revoke");
+                return;
             }
-            else
+            RuleCondition rule = SelectedRule;
+            if(OPERATION != CRUD.UPDATE)
             {
-                if (SelectedRule == null)
+                try
                 {
-                    MessageBox.Show("Please Select a rule to Revoke");
+                    rule = CreateRule();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to Create Rule: " + ex.Message);
                     return;
                 }
-                RuleCondition rule = SelectedRule;
-                if(OPERATION != CRUD.UPDATE)
-                {
-                    try
-                    {
-                        rule = CreateRule();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Unable to Create Rule: " + ex.Message);
-                        return;
-                    }
                     
-                }
-                ClearCRUDFields(sender, e);
-                rule.ApplyRule = false;
-                xmlController.SaveRule(rule);
-
-                PopulateRulesList(SelectedParticle);
             }
+            ClearCRUDFields(sender, e);
+            rule.ApplyRule = false;
+            xmlController.SaveRule(rule);
+
+            PopulateRulesList(SelectedParticle);
         }
 
         private void DeleteRule(object sender, EventArgs e)
@@ -498,8 +482,8 @@ namespace AirMonit_Alarm
             if (particlesRulesDictionary != null)
             {
                 particlesRulesDictionary.Clear();
-                List<ParticleTag> particles = xmlController.GetParticlesName();
-                foreach (ParticleTag particle in particles)
+
+                foreach (ParticleTag particle in particlesList)
                 {
                     
                     List<RuleCondition> particleRules = xmlController.GetParticleRulesConditions(particle.Name);
@@ -518,6 +502,8 @@ namespace AirMonit_Alarm
             }
         }
 
+        #region Sub Menu Apply Revoke particle
+
         private void applyParticle(object sender, EventArgs e)
         {
             UpdateParticleStatus(SelectedParticle, true);
@@ -528,14 +514,16 @@ namespace AirMonit_Alarm
             UpdateParticleStatus(SelectedParticle, false);
         }
 
+        #endregion
+
         private void UpdateParticleStatus(string particle, bool status)
         {
-            xmlController.DisableReading();
 
             xmlController.UpdateParticleStatus(particle, status);
 
-            xmlController.EnableReading();
         }
+
+        #region Change XML and XSD Files
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -571,7 +559,8 @@ namespace AirMonit_Alarm
                 txtFilePath.Text = FILEPATHXSD;
             }
         }
-
+        
+        #endregion
 
         /// <summary>
         /// Is triggered when a new particle is added and it's thrown into mqtt dataUploader Topic
@@ -597,6 +586,16 @@ namespace AirMonit_Alarm
 
         public void UpdateXmlRelatedData(object source)
         {
+
+            //Atualizar a lista de particulas
+            //Atualizar o dicionario de regras
+            //Atulizar o UI da lista de particulas
+            particlesList.Clear();
+            foreach (ParticleTag p in xmlController.GetParticlesName())
+            {
+                particlesList.Add(p);
+            }
+
             LoadXmlRulesDictionary();
             PopulateParticlesList();
         }

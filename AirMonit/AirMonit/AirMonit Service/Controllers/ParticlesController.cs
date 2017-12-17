@@ -188,6 +188,21 @@ namespace AirMonit_Service.Controllers
             return DBManager.GetAlarmsBetweenDates(start, end);
         }
 
+
+        [Route("api/particles/alarms/day/{day}")]
+        public IEnumerable<AlarmEntry> GetAlarmsInDay(string day)
+        {
+            DateTime date = DateTime.Parse(day);
+            return DBManager.GetAlarmsInDay(day);
+        }
+
+        [Route("api/particles/alarms/city/{city}/day/{day}")]
+        public IEnumerable<AlarmEntry> GetAlarmsInCityInDay(string city, string day)
+        {
+            DateTime date = DateTime.Parse(day);
+            return DBManager.GetAlarmsinCityInDay(city, day);
+        }
+
         #endregion
 
     }

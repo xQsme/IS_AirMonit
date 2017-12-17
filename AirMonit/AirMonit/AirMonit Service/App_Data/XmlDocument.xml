@@ -481,6 +481,20 @@
             </summary>
             <param name="documentPath">The physical path to XML document.</param>
         </member>
+        <member name="M:AirMonit_Service.Controllers.CitiesController.GetCities">
+            <summary>
+            Get a list of all cities availabe in the DB
+            </summary>
+            <returns>List of cities</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:AirMonit_Service.Controllers.CitiesController.GetCitySensors(System.String)" -->
+        <member name="M:AirMonit_Service.Controllers.CitiesController.GetCityLastSensors(System.String)">
+            <summary>
+            Gets the last 
+            </summary>
+            <param name="city">Lisboa</param>
+            <returns></returns>
+        </member>
         <member name="M:AirMonit_Service.Controllers.ParticlesController.GetAllParticles">
             <summary>
             Get All Entries From All Cities

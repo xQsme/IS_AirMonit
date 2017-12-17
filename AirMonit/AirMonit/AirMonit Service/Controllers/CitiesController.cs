@@ -13,18 +13,31 @@ namespace AirMonit_Service.Controllers
 {
     public class CitiesController : ApiController
     {
-        // GET: api/Cities
+        /// <summary>
+        /// Get a list of all cities availabe in the DB
+        /// </summary>
+        /// <returns>List of cities</returns>
         public IEnumerable<City> GetCities()
         {
             return DBManager.GetAllCities();
         }
 
+        /// <summary>
+        /// Gets the city all sensors data from the start
+        /// </summary>
+        /// <param name="city">Leiria</param>
+        /// <returns>IEnumerable<SensorEntry></returns>
         [Route("api/cities/{city}/sensors")]
         public IEnumerable<SensorEntry> GetCitySensors(string city)
         {
             return DBManager.GetAllSensorsCity(city);
         }
 
+        /// <summary>
+        /// Gets the last 
+        /// </summary>
+        /// <param name="city">Lisboa</param>
+        /// <returns></returns>
         [Route("api/cities/{city}/sensors/last")]
         public IEnumerable<SensorEntry> GetCityLastSensors(string city)
         {
@@ -40,7 +53,13 @@ namespace AirMonit_Service.Controllers
         [Route("api/cities/{city}/incidents")]
         public IEnumerable<IncidentEntry> GetCityIncidents(string city)
         {
-            return DBManager.GetTodaysIncidentsInCity(city);
+            return DBManager.GetIncidentsInCity(city);
+        }
+
+        [Route("api/cities/{city}/incidents/last")]
+        public IEnumerable<IncidentEntry> GetTopLastIncidents(string city)
+        {
+            return DBManager.GetLastIncidentsInCity(city);
         }
 
         [Route("api/cities/events")]
