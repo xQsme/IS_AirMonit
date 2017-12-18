@@ -19,7 +19,14 @@ namespace AirMonit_Service.Controllers
         /// <returns>List of cities</returns>
         public IEnumerable<City> GetCities()
         {
-            return DBManager.GetAllCities();
+            try
+            {
+                return DBManager.GetAllCities();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -30,7 +37,14 @@ namespace AirMonit_Service.Controllers
         [Route("api/cities/{city}/sensors")]
         public IEnumerable<SensorEntry> GetCitySensors(string city)
         {
-            return DBManager.GetAllSensorsCity(city);
+            try
+            {
+               return DBManager.GetAllSensorsCity(city);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -41,58 +55,110 @@ namespace AirMonit_Service.Controllers
         [Route("api/cities/{city}/sensors/last")]
         public IEnumerable<SensorEntry> GetCityLastSensors(string city)
         {
-            return DBManager.GetLastSensorsInCity(city);
+            try
+            {
+                return DBManager.GetLastSensorsInCity(city);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         [Route("api/cities/incidents")]
         public IEnumerable<IncidentEntry> GetCityIncidents()
         {
-            return DBManager.GetAllIncidents();
+            try
+            {
+                return DBManager.GetAllIncidents();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         [Route("api/cities/{city}/incidents")]
         public IEnumerable<IncidentEntry> GetCityIncidents(string city)
         {
-            return DBManager.GetIncidentsInCity(city);
+            try
+            {
+                return DBManager.GetIncidentsInCity(city);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         [Route("api/cities/{city}/incidents/last")]
         public IEnumerable<IncidentEntry> GetTopLastIncidents(string city)
         {
-            return DBManager.GetLastIncidentsInCity(city);
+            try
+            {
+                return DBManager.GetLastIncidentsInCity(city);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         [Route("api/cities/events")]
         public IEnumerable<string> GetCitiesEvents()
         {
-            return DBManager.GetEvents();
+            try
+            {
+                return DBManager.GetEvents();
+            }
+            catch (Exception)
+            {
+                return null;
+            }    
         }
 
         [Route("api/cities/{city}/sensors")]
         public IHttpActionResult PostCitySensor(string city, [FromBody]SensorEntry sensorEntry)
         {
-            int rows = DBManager.InsertSensor(sensorEntry);
-            if(rows > 0)
+            try
             {
-                return Ok();
+                int rows = DBManager.InsertSensor(sensorEntry);
+                if (rows > 0)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
-            else
+            catch (Exception)
             {
-                return BadRequest();
+                return null;
             }
+            
         }
 
         [Route("api/cities/{city}/incidents")]
         public IHttpActionResult PostCityIncident(string city, [FromBody]IncidentEntry incidentEntry)
         {
-            int rows = DBManager.InsertIncident(incidentEntry);
-            if(rows > 0)
+            try
             {
-                return Ok();
+                int rows = DBManager.InsertIncident(incidentEntry);
+                if (rows > 0)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(LogHelper.GetLog());
+                }
             }
-            else {
-                return BadRequest(LogHelper.GetLog());
+            catch (Exception)
+            {
+                return null;
             }
+            
 
         }
 

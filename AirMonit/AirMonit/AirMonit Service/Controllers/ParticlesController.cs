@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.UI.WebControls;
+using IAirEntries.Models;
 
 namespace AirMonit_Service.Controllers
 {
@@ -26,13 +27,29 @@ namespace AirMonit_Service.Controllers
         /// <returns></returns>
         public IEnumerable<ParticleEntry> GetAllParticles()
         {
-            return DBManager.GetAllParticles();
+            try
+            {
+                return DBManager.GetAllParticles();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            
         }
 
         [Route("api/particles/{particle}")]
         public IEnumerable<ParticleEntry> GetParticle(string particle)
         {
-            return DBManager.GetParticle(particle);
+            try
+            {
+                return DBManager.GetParticle(particle);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            
         }
 
         //OK!
@@ -46,9 +63,16 @@ namespace AirMonit_Service.Controllers
         //api/particles/CO/day/30-11-2017
         public IEnumerable<ParticleEntry> GetParticleByDate(string particle, string day)
         {
-            
+            try
+            {
                 DateTime date = DateTime.Parse(day);
                 return DBManager.GetParticleInDay(particle, date);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+                
 
 
         }
@@ -64,16 +88,23 @@ namespace AirMonit_Service.Controllers
         //api/particles/CO/days/27-11-2017_30-11-2017
         public IEnumerable<ParticleEntry> GetParticleBetweenDates(string particle, string days)
         {
-            
-            string[] dates = days.Split('_');
-            if(dates.Length <= 1)
+            try
+            {
+                string[] dates = days.Split('_');
+                if (dates.Length <= 1)
+                {
+                    return null;
+                }
+
+                DateTime start = DateTime.Parse(dates[0]);
+                DateTime end = DateTime.Parse(dates[1]);
+                return DBManager.GetParticleBetweenDays(particle, start, end);
+            }
+            catch (Exception)
             {
                 return null;
             }
             
-                DateTime start = DateTime.Parse(dates[0]);
-                DateTime end = DateTime.Parse(dates[1]);
-                return DBManager.GetParticleBetweenDays(particle, start, end);
 
 
         }
@@ -89,8 +120,16 @@ namespace AirMonit_Service.Controllers
         [Route("api/particles/{particle}/city/{city}/day/{day}")]
         public IEnumerable<ParticleEntry> GetParticleInDay(string particle, string day, string city)
         {
+            try
+            {
                 DateTime date = DateTime.Parse(day);
                 return DBManager.GetCityEntriesInDay(particle, city, date);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+                
             
 
         }
@@ -107,8 +146,16 @@ namespace AirMonit_Service.Controllers
         [Route("api/particles/{particle}/summarize/day/{day}/hour")]
         public IEnumerable<SummarizeEntries> GetParticleSummarizeInDay(string particle, string day)
         {
+            try
+            {
                 DateTime date = DateTime.Parse(day);
                 return DBManager.GetParticleSummarizeInDay(particle, date);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+                
             
 
         }
@@ -124,9 +171,16 @@ namespace AirMonit_Service.Controllers
         [Route("api/particles/{particle}/summarize/city/{city}/day/{day}/hour")]
         public IEnumerable<SummarizeEntries> GetParticleSummarizeInDayInCity(string particle, string day, string city)
         {
-            
+            try
+            {
                 DateTime date = DateTime.Parse(day);
-                return DBManager.GetSummarizeCityEntriesInDay(particle, city, date);
+                return DBManager.GetSummarizeCityEntriesInDay(particle, city, date).ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+                
             
 
         }
@@ -139,16 +193,24 @@ namespace AirMonit_Service.Controllers
         [Route("api/particles/{particle}/summarize/days/{days}/")]
         public IEnumerable<SummarizeEntries> GetParticleSummarizeInDays(string particle, string days)
         {
-            string[] dates = days.Split('_');
-            if (dates.Length <= 1)
+            try
             {
-                return null;
-            }
-            
+                string[] dates = days.Split('_');
+                if (dates.Length <= 1)
+                {
+                    return null;
+                }
+
 
                 DateTime start = DateTime.Parse(dates[0]);
                 DateTime end = DateTime.Parse(dates[1]);
                 return DBManager.GetParticleSummarizeInDay(particle, start, end);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            
             
         }
 
@@ -156,16 +218,24 @@ namespace AirMonit_Service.Controllers
         [Route("api/particles/{particle}/summarize/city/{city}/days/{days}")]
         public IEnumerable<SummarizeEntries> GetParticleSummarizeInDaysInCity(string particle, string days, string city)
         {
-            string[] dates = days.Split('_');
-            if (dates.Length <= 1)
+            try
+            {
+                string[] dates = days.Split('_');
+                if (dates.Length <= 1)
+                {
+                    return null;
+                }
+
+
+                DateTime start = DateTime.Parse(dates[0]);
+                DateTime end = DateTime.Parse(dates[1]);
+                return DBManager.GetParticlesSummarizeInDaysInCity(particle, city, start, end);
+            }
+            catch (Exception)
             {
                 return null;
             }
-
-
-            DateTime start = DateTime.Parse(dates[0]);
-            DateTime end = DateTime.Parse(dates[1]);
-            return DBManager.GetParticlesSummarizeInDaysInCity(particle, city, start, end);
+            
         }
 
         #endregion
@@ -175,32 +245,56 @@ namespace AirMonit_Service.Controllers
         [Route("api/particles/alarms/days/{days}")]
         public IEnumerable<AlarmEntry> GetAlarmsBetweenDates(string days)
         {
-            string[] dates = days.Split('_');
-            if (dates.Length <= 1)
+            try
+            {
+                string[] dates = days.Split('_');
+                if (dates.Length <= 1)
+                {
+                    return null;
+                }
+
+
+                DateTime start = DateTime.Parse(dates[0]);
+                DateTime end = DateTime.Parse(dates[1]);
+
+                return DBManager.GetAlarmsBetweenDates(start, end);
+            }
+            catch (Exception)
             {
                 return null;
             }
-
-
-            DateTime start = DateTime.Parse(dates[0]);
-            DateTime end = DateTime.Parse(dates[1]);
-
-            return DBManager.GetAlarmsBetweenDates(start, end);
+            
         }
 
 
         [Route("api/particles/alarms/day/{day}")]
         public IEnumerable<AlarmEntry> GetAlarmsInDay(string day)
         {
-            DateTime date = DateTime.Parse(day);
-            return DBManager.GetAlarmsInDay(day);
+            try
+            {
+                DateTime date = DateTime.Parse(day);
+                return DBManager.GetAlarmsInDay(day);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            
         }
 
         [Route("api/particles/alarms/city/{city}/day/{day}")]
         public IEnumerable<AlarmEntry> GetAlarmsInCityInDay(string city, string day)
         {
-            DateTime date = DateTime.Parse(day);
-            return DBManager.GetAlarmsinCityInDay(city, day);
+            try
+            {
+                DateTime date = DateTime.Parse(day);
+                return DBManager.GetAlarmsinCityInDay(city, day);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            
         }
 
         #endregion

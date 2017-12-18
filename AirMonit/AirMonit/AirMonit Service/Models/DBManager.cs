@@ -249,7 +249,7 @@ namespace AirMonit_Service.Models
         }
 
         //Como saber se é admin ou se é user normal para poder usar o TOP?
-        private const string SELECT_ALL_ENTRIES = "SELECT @TOP RTRIM(name) as name, value, date, " + SELECT_CITY_NAME_BY_ID+"as city FROM Entries";
+        private const string SELECT_ALL_ENTRIES = "SELECT RTRIM(name) as name, value, date, " + SELECT_CITY_NAME_BY_ID+"as city FROM Entries";
         public static List<ParticleEntry> GetAllParticles()
         {
             SqlConnection conn = new SqlConnection(CONNSTR);
@@ -261,7 +261,6 @@ namespace AirMonit_Service.Models
                 SqlCommand cmd = new SqlCommand();
                 cmd.CommandText = SELECT_ALL_ENTRIES;
                 cmd.Connection = conn;
-                cmd.Parameters.AddWithValue("@TOP", "TOP 10");
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
