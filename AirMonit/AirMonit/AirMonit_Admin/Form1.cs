@@ -59,8 +59,12 @@ namespace AirMonit_Admin
             PopulateParticleComboBox();
             GetCities();
 
-            comboBox1.SelectedIndex = 0;
-            comboBox2.SelectedIndex = 0;
+            if (labelErro.Visible)
+            {
+                comboBox1.SelectedIndex = 0;
+                comboBox2.SelectedIndex = 0;
+            }
+            
 
             GetParticles();
 
@@ -89,7 +93,16 @@ namespace AirMonit_Admin
             string cities_uri = BASE_URI + CITIES_ENDPOINT;
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(cities_uri);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            HttpWebResponse response;
+            try
+            {
+                response = (HttpWebResponse) request.GetResponse();
+            }
+            catch (System.Net.WebException e)
+            {
+                labelErro.Visible = true;
+                return;
+            }
 
             //Stream e o StreamReader
             string content = String.Empty;
@@ -164,7 +177,16 @@ namespace AirMonit_Admin
                 string particlesUri = BASE_URI + string.Format(PARTICLES_ENDPOINT, selectedParticle, city, selectedDate);
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(particlesUri);
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                HttpWebResponse response;
+            try
+            {
+                response = (HttpWebResponse) request.GetResponse();
+            }
+            catch (System.Net.WebException e)
+            {
+                labelErro.Visible = true;
+                return;
+            }
 
                 //Stream e o StreamReader
                 string content = String.Empty;
@@ -207,7 +229,16 @@ namespace AirMonit_Admin
             string particlesUri = BASE_URI + string.Format(PARTICLES_ENDPOINT, selectedParticle, selectedCity, selectedDate);
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(particlesUri);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            HttpWebResponse response;
+            try
+            {
+                response = (HttpWebResponse) request.GetResponse();
+            }
+            catch (System.Net.WebException e)
+            {
+                labelErro.Visible = true;
+                return;
+            }
 
             //Stream e o StreamReader
             string content = String.Empty;
@@ -276,7 +307,16 @@ namespace AirMonit_Admin
             string incidentsUri = BASE_URI + ALL_INCIDENTS_ENDPOINT;
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(incidentsUri);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            HttpWebResponse response;
+            try
+            {
+                response = (HttpWebResponse) request.GetResponse();
+            }
+            catch (System.Net.WebException e)
+            {
+                labelErro.Visible = true;
+                return;
+            }
 
             //Stream e o StreamReader
             string content = String.Empty;
@@ -318,8 +358,16 @@ namespace AirMonit_Admin
                 string alarmsUri = BASE_URI + string.Format(ALARMS_ENDPOINT, startDate, endDate);
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(alarmsUri);
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
+                HttpWebResponse response;
+                try
+                {
+                    response = (HttpWebResponse) request.GetResponse();
+                }
+                catch (System.Net.WebException e)
+                {
+                    labelErro.Visible = true;
+                    return;
+                }
                 //Stream e o StreamReader
                 string content = String.Empty;
                 using (Stream stream = response.GetResponseStream())
