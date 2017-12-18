@@ -2,47 +2,31 @@
 <rules applyRule="false">
   <CO applyRule="true">
     <between applyRule="false">
-      <num1>30</num1>
-      <num2>30</num2>
-      <msg>Teste...</msg>
+      <num1>50</num1>
+      <num2>100</num2>
+      <msg>Perigoso para pessoas com problemas respiratórios</msg>
     </between>
-    <less applyRule="true">
-      <num>-4</num>
-      <msg>NEVER MIND!</msg>
-    </less>
-    <less applyRule="false">
-      <num>0</num>
-      <msg>asdasdas</msg>
-    </less>
-    <greater applyRule="false">
-      <num>3</num>
-      <msg>sacdsaçlmdçsakmdsal</msg>
-    </greater>
   </CO>
   <O3 applyRule="true">
     <less applyRule="true">
       <num>30</num>
-      <msg>Level is too low minimize exposure to the sun..</msg>
+      <msg>Exposição ao sol pode prejudicar pessoas com problemas de pele</msg>
     </less>
-    <greater applyRule="true">
-      <num>0</num>
-      <msg>AIAIIAIAIAIIA</msg>
-    </greater>
     <between applyRule="true">
-      <num1>10</num1>
-      <num2>20</num2>
-      <msg>Sun exposure can be very dangerous!</msg>
+      <num1>0</num1>
+      <num2>30</num2>
+      <msg>Exposição ao sol muito perigosa, aconselha-se ficar em casa</msg>
     </between>
   </O3>
   <NO2 applyRule="false">
     <between applyRule="true">
-      <num1>300</num1>
-      <num2>300</num2>
-      <msg>Avoid outside contact dSDASDSASADASDSAD</msg>
+      <num1>100</num1>
+      <num2>150</num2>
+      <msg>Crianças e idosos deve de limitar o contacto com o exterior</msg>
     </between>
     <greater applyRule="true">
-      <num>0</num>
-      <msg>DSAFADSFASSADFAS</msg>
+      <num>200</num>
+      <msg>Perigo para toda gente evitar contacto exterior, manter janelas fechadas</msg>
     </greater>
   </NO2>
 </rules>
