@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -46,15 +46,16 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.listViewEventos = new System.Windows.Forms.ListView();
+            this.labelErro = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
             // 
             // chart1
             // 
-            chartArea4.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea4);
-            legend4.Name = "Legend1";
-            this.chart1.Legends.Add(legend4);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(295, 81);
             this.chart1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.chart1.Name = "chart1";
@@ -213,11 +214,24 @@
             this.listViewEventos.UseCompatibleStateImageBehavior = false;
             this.listViewEventos.View = System.Windows.Forms.View.Details;
             // 
+            // labelErro
+            // 
+            this.labelErro.BackColor = System.Drawing.Color.Transparent;
+            this.labelErro.ForeColor = System.Drawing.Color.Red;
+            this.labelErro.Location = new System.Drawing.Point(13, 340);
+            this.labelErro.Name = "labelErro";
+            this.labelErro.Size = new System.Drawing.Size(263, 60);
+            this.labelErro.TabIndex = 18;
+            this.labelErro.Text = "Não foi possivel contactar o serviço certifique-se que o está a usar o uri corret" +
+    "o nas settings do projeto!";
+            this.labelErro.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1211, 783);
+            this.Controls.Add(this.labelErro);
             this.Controls.Add(this.listViewEventos);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.comboBox2);
@@ -234,6 +248,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.chart1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Form1";
             this.Text = "AirMonit Admin";
@@ -261,6 +276,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ListView listViewEventos;
+        private System.Windows.Forms.Label labelErro;
     }
 }
 
