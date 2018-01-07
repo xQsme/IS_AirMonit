@@ -26,6 +26,7 @@ namespace AirMonit_Alarm
         #endregion
 
         private string SelectedParticle;
+        private int AlarmMsgMaxSize = Settings.Default.AlarmMsgMaxSize;
         public CRUD OPERATION = CRUD.NONE;
         private RuleCondition SelectedRule;
 
@@ -337,6 +338,11 @@ namespace AirMonit_Alarm
         private void btnApply_Click(object sender, EventArgs e)
         {
             RuleCondition rule;
+            if (AlarmMsgMaxSize < txtAlertMessage.Text.Length)
+            {
+                MessageBox.Show("O tamanho máximo da mensagem é "+ AlarmMsgMaxSize+ " se a base de dados mudou e suporta um tamanho diferente terá que mudar nas settings 'AlarmMsgMaxSize'");
+                return;
+            }
             if (OPERATION == CRUD.UPDATE)
             {
                 if(SelectedRule == null)
